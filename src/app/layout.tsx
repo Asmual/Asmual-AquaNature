@@ -1,20 +1,25 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Asmual Aqua Nature",
-  description: "Aqua Nature Store & Services",
+  title: "Asmual AquaNature | Premium Fishes, Plants & Aquascaping",
+  description:
+    "Your premier aquatic sanctuary for freshwater & seawater fishes, exotic aquatic plants, bonsai, and accessories.",
 };
 
 export default function RootLayout({
@@ -23,12 +28,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${manrope.variable}`}
+      suppressHydrationWarning
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col"
         suppressHydrationWarning
       >
-        {children}
+        <Navbar />
+        <div className="flex-1">{children}</div>
       </body>
     </html>
   );
