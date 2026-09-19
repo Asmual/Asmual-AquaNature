@@ -134,10 +134,13 @@ export const Navbar = () => {
                 </span>
               </button>
 
-              <button className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200">
+              <Link
+                href="/login"
+                className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+              >
                 <User className="w-4 h-4" />
                 <span>Account</span>
-              </button>
+              </Link>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -366,10 +369,14 @@ export const Navbar = () => {
             </div>
 
             <div className="pt-2 border-t border-border">
-              <button className="w-full py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold flex items-center justify-center gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold flex items-center justify-center gap-2"
+              >
                 <User className="w-4 h-4" />
                 <span>My Account / Sign In</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

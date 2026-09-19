@@ -9,7 +9,7 @@ if (!uri) {
 }
 
 const client = new MongoClient(uri, { family: 4 });
-const db = client.db("Aquatic_PlantoPedia");
+const db = client.db("Asmual-AquaNature");
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
