@@ -19,8 +19,9 @@ import {
   Loader2,
   ShieldCheck,
   Sparkles,
+  Fish,
+  Leaf,
   CheckCircle2,
-  LogIn,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { registerSchema, RegisterInput } from "@/lib/validations/auth.schema";
@@ -91,118 +92,116 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-background">
-      {/* ========================================================= */}
-      {/* 1. LEFT SIDE: BRAND & VISUAL SHOWCASE (Hidden on mobile) */}
-      {/* ========================================================= */}
-      <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative flex-col justify-between p-10 xl:p-14 overflow-hidden bg-primary text-white">
-        {/* Background Image with Deep Ocean Gradient Overlay */}
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-background selection:bg-accent-soft selection:text-primary">
+      {/* ========================================================================= */}
+      {/* 1. LEFT SIDE: HERO IMAGE WITH SOFT BLUR & AQUARIUM / PLANT NARRATIVE     */}
+      {/* ========================================================================= */}
+      <div className="hidden lg:flex lg:col-span-6 xl:col-span-5 relative flex-col justify-between p-10 xl:p-14 overflow-hidden bg-primary text-white">
+        {/* Background Image: public/images/Login-SignUp.jpg */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/images/Hero-Banner.png"
-            alt="Asmual AquaNature Sanctuary"
+            src="/images/Login-SignUp.jpg"
+            alt="Asmual AquaNature Aquarium & Living Plants"
             fill
             priority
-            className="object-cover object-center scale-105"
+            className="object-cover object-center scale-105 filter blur-[1.5px]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B4A6F] via-[#0B4A6F]/90 to-[#083A57]/80" />
-          <div className="absolute inset-0 bg-radial-at-c from-accent/20 via-transparent to-black/50 mix-blend-overlay" />
+
+          {/* Soft Blur & Deep Ocean Atmospheric Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B4A6F]/95 via-[#0B4A6F]/80 to-[#083A57]/85 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-radial-at-c from-accent/20 via-transparent to-black/40 mix-blend-overlay" />
         </div>
 
-        {/* Ambient Glow Orbs */}
-        <div className="absolute -top-20 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary-dark/50 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Top Header: Logo & Back to Home Link */}
+        {/* Top Header: Logo + Back to Shop Link */}
         <div className="relative z-10 flex items-center justify-between">
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
-              <Image
-                src="/images/Asmual-AquaNature-logo.png"
-                alt="Logo"
-                width={44}
-                height={44}
-                className="w-full h-full object-contain rounded-full"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-extrabold text-xl text-white tracking-tight">
-                Asmual <span className="text-accent">AquaNature</span>
-              </span>
-              <span className="text-[10px] font-semibold text-accent/80 tracking-widest uppercase">
-                Aquatic & Nature Studio
-              </span>
-            </div>
-          </Link>
+          <Logo size="md" />
 
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/90 text-xs font-semibold backdrop-blur-md border border-white/20 transition-all duration-200"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-md border border-white/20 transition-all duration-200 shadow-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Shop</span>
           </Link>
         </div>
 
-        {/* Middle Content: Member Benefits & Perks */}
-        <div className="relative z-10 my-auto py-10 space-y-6">
+        {/* Center Content: Community Perks & Collector Privileges */}
+        <div className="relative z-10 my-auto py-8 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/20 border border-accent/30 text-accent text-xs font-semibold backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Membership Advantages</span>
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            <span>Join Aqua Collectors Club</span>
           </div>
 
-          <h2 className="font-heading font-extrabold text-3xl xl:text-4xl text-white tracking-tight leading-snug">
-            Join 2,500+ Passionate Aquarists Across Bangladesh.
+          <h2 className="font-heading font-extrabold text-3xl xl:text-4xl text-white tracking-tight leading-tight">
+            Start Your Aquatic & Living Nature Journey.
           </h2>
 
-          <p className="text-sm xl:text-base text-white/80 leading-relaxed max-w-md">
-            Create an account to track live orders in real-time, get notified on rare Betta drops, and receive customized plant nutrition plans.
+          <p className="text-sm xl:text-base text-white/85 font-normal leading-relaxed">
+            Create an account to gain priority access to imported rare Betta drops, member pricing on aquatic flora, and personal consultations with our master aquascapers.
           </p>
 
-          {/* Key Member Perks */}
+          {/* Member Benefits */}
           <div className="space-y-3 pt-2">
-            <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-4 h-4 text-accent" />
+            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-8 h-8 rounded-full bg-accent/25 flex items-center justify-center shrink-0 mt-0.5">
+                <Fish className="w-4 h-4 text-accent" />
               </div>
-              <span className="text-xs xl:text-sm text-white/90 font-medium">
-                Early access to new imported fish batches & rare bonsai
-              </span>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  First Access to Rare Strains
+                </h4>
+                <p className="text-xs text-white/75">
+                  Get notified 24 hours ahead on Alien Bettas and Albino Blue Topaz Guppy batches.
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-8 h-8 rounded-full bg-accent/25 flex items-center justify-center shrink-0 mt-0.5">
+                <Leaf className="w-4 h-4 text-accent" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  Aquatic Care & Dosing Schedules
+                </h4>
+                <p className="text-xs text-white/75">
+                  Tailored fertilizer, light, and water parameter guidance for your setup.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-8 h-8 rounded-full bg-accent/25 flex items-center justify-center shrink-0 mt-0.5">
                 <ShieldCheck className="w-4 h-4 text-accent" />
               </div>
-              <span className="text-xs xl:text-sm text-white/90 font-medium">
-                Automatic 100% Live Arrival Protection on all shipments
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                <Sparkles className="w-4 h-4 text-accent" />
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  Express Live Transport
+                </h4>
+                <p className="text-xs text-white/75">
+                  Priority packing with double-oxygenated insulated delivery across Bangladesh.
+                </p>
               </div>
-              <span className="text-xs xl:text-sm text-white/90 font-medium">
-                Member-only discounts and weekly flash deals
-              </span>
             </div>
           </div>
         </div>
 
         {/* Bottom Micro Footer */}
-        <div className="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
-          <span>© {new Date().getFullYear()} Asmual AquaNature</span>
-          <span className="text-accent/80 font-medium">Dhaka, Bangladesh</span>
+        <div className="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-white/65">
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
+            <span>100% Guaranteed Healthy Stock</span>
+          </div>
+          <span>Dhaka, Bangladesh</span>
         </div>
       </div>
 
-      {/* ========================================================= */}
-      {/* 2. RIGHT SIDE: REGISTRATION FORM & SIGN IN CALLOUT        */}
-      {/* ========================================================= */}
-      <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 overflow-y-auto">
-        {/* Mobile Header (Shown on mobile only) */}
-        <div className="flex lg:hidden items-center justify-between pb-6 mb-6 border-b border-border">
+      {/* ========================================================================= */}
+      {/* 2. RIGHT SIDE: REGISTRATION FORM WITH ONE-CLICK LOGIN TAB SWITCHER       */}
+      {/* ========================================================================= */}
+      <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 overflow-y-auto">
+        {/* Mobile Header (Only visible on small devices) */}
+        <div className="flex lg:hidden items-center justify-between pb-4 mb-6 border-b border-border">
           <Logo size="sm" />
           <Link
             href="/"
@@ -213,33 +212,31 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        <div className="max-w-md w-full mx-auto my-auto space-y-6">
-          {/* HIGH FOCUS SIGN IN PROMOTION BANNER */}
-          <div className="p-4 rounded-xl bg-surface border border-border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="text-center sm:text-left">
-              <p className="text-xs font-bold text-primary">
-                Already have an account?
-              </p>
-              <p className="text-[11px] text-muted-foreground">
-                Sign in to view your orders and saved items.
-              </p>
-            </div>
+        <div className="max-w-md w-full mx-auto my-auto space-y-5">
+          {/* INTERACTIVE TAB SWITCHER (Instant 1-click navigation between Login & SignUp) */}
+          <div className="p-1.5 rounded-full bg-surface border border-border grid grid-cols-2 gap-1 shadow-inner">
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary hover:bg-primary-dark text-white font-bold text-xs shadow-md transition-all duration-200 shrink-0 hover:scale-105"
+              className="py-2.5 rounded-full text-center text-xs sm:text-sm font-semibold text-muted-foreground hover:text-primary hover:bg-white transition-all duration-200 flex items-center justify-center gap-1.5"
             >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In Here</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-accent" />
+              <span>Sign In</span>
             </Link>
+            <button
+              type="button"
+              className="py-2.5 rounded-full text-center text-xs sm:text-sm font-bold bg-primary text-white shadow-md transition-all duration-200 cursor-default"
+            >
+              Create Account
+            </button>
           </div>
 
           {/* Form Header */}
-          <div className="space-y-1 text-left">
+          <div className="space-y-1">
             <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">
               Create Your Account
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Sign up with Google or complete the form below.
+              Sign up with Google or complete the registration below.
             </p>
           </div>
 
@@ -286,7 +283,7 @@ export default function RegisterPage() {
           </div>
 
           {/* REGISTRATION FORM */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             {/* Full Name */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-foreground uppercase tracking-wide">
@@ -332,7 +329,7 @@ export default function RegisterPage() {
             {/* Phone Number */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-foreground uppercase tracking-wide">
-                Phone Number <span className="text-muted-foreground font-normal lowercase">(optional)</span>
+                Phone Number <span className="text-muted-foreground font-normal lowercase">(optional, for live arrival alerts)</span>
               </label>
               <div className="relative flex items-center">
                 <Phone className="w-4 h-4 text-muted-foreground absolute left-3.5 pointer-events-none" />
@@ -345,9 +342,8 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Password Grid (Two Columns) */}
+            {/* Password Fields in 2 Columns on Tablet/Desktop */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-foreground uppercase tracking-wide">
                   Password
@@ -376,10 +372,9 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {/* Confirm Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-foreground uppercase tracking-wide">
-                  Confirm Password
+                  Confirm
                 </label>
                 <div className="relative flex items-center">
                   <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none" />
@@ -423,7 +418,7 @@ export default function RegisterPage() {
                   htmlFor="termsAccepted"
                   className="ml-2 block text-xs text-muted-foreground leading-snug cursor-pointer select-none"
                 >
-                  I agree to the{" "}
+                  I accept the{" "}
                   <Link href="#" className="text-primary hover:text-accent font-semibold underline">
                     Terms
                   </Link>{" "}
@@ -450,18 +445,18 @@ export default function RegisterPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  <span>Creating Your Account...</span>
+                  <span>Creating Account...</span>
                 </>
               ) : (
                 <>
-                  <span>Create Account</span>
+                  <span>Create Free Account</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Privacy Note */}
+          {/* Security Note */}
           <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground text-center pt-1">
             <ShieldCheck className="w-3.5 h-3.5 text-accent" />
             <span>Encrypted with MongoDB & Better Auth security</span>
@@ -469,7 +464,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom Prominent Sign In Link */}
-        <div className="pt-6 mt-6 border-t border-border text-center">
+        <div className="pt-4 mt-4 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
