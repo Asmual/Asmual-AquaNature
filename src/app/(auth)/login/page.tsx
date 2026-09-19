@@ -1,12 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock, Mail, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  Sparkles,
+  ShieldCheck,
+  CheckCircle2,
+  UserPlus,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { loginSchema, LoginInput } from "@/lib/validations/auth.schema";
 import Logo from "@/components/shared/Logo";
@@ -79,24 +92,159 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-surface via-background to-surface/30">
-      <div className="w-full max-w-md space-y-8">
-        {/* Header with Logo */}
-        <div className="flex flex-col items-center text-center space-y-3">
-          <Logo size="lg" />
-          <div className="space-y-1">
-            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">
-              Welcome Back
-            </h1>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              Sign in to manage your aquarium orders, wishlist, and aquatic care guides.
-            </p>
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-background">
+      {/* ========================================================= */}
+      {/* 1. LEFT SIDE: BRAND & VISUAL SHOWCASE (Hidden on mobile) */}
+      {/* ========================================================= */}
+      <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative flex-col justify-between p-10 xl:p-14 overflow-hidden bg-primary text-white">
+        {/* Background Image with Deep Ocean Gradient Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/Hero-Banner.png"
+            alt="Asmual AquaNature Sanctuary"
+            fill
+            priority
+            className="object-cover object-center scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B4A6F] via-[#0B4A6F]/90 to-[#083A57]/80" />
+          <div className="absolute inset-0 bg-radial-at-c from-accent/20 via-transparent to-black/50 mix-blend-overlay" />
+        </div>
+
+        {/* Ambient Glow Orbs */}
+        <div className="absolute -top-20 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary-dark/50 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Top Header: Logo & Back to Home Link */}
+        <div className="relative z-10 flex items-center justify-between">
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
+              <Image
+                src="/images/Asmual-AquaNature-logo.png"
+                alt="Logo"
+                width={44}
+                height={44}
+                className="w-full h-full object-contain rounded-full"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-heading font-extrabold text-xl text-white tracking-tight">
+                Asmual <span className="text-accent">AquaNature</span>
+              </span>
+              <span className="text-[10px] font-semibold text-accent/80 tracking-widest uppercase">
+                Aquatic & Nature Studio
+              </span>
+            </div>
+          </Link>
+
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/90 text-xs font-semibold backdrop-blur-md border border-white/20 transition-all duration-200"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Shop</span>
+          </Link>
+        </div>
+
+        {/* Middle Content: About Website & Trust Metrics */}
+        <div className="relative z-10 my-auto py-10 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/20 border border-accent/30 text-accent text-xs font-semibold backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Official Client Portal</span>
+          </div>
+
+          <h2 className="font-heading font-extrabold text-3xl xl:text-4xl text-white tracking-tight leading-snug">
+            Bringing Ocean Tranquility & Living Flora into Your Life.
+          </h2>
+
+          <p className="text-sm xl:text-base text-white/80 leading-relaxed max-w-md">
+            Bangladesh&apos;s leading sanctuary for quarantine-certified Betta fighters, pureline guppies, vibrant marine fishes, and sculpted bonsai living trees.
+          </p>
+
+          {/* Key Value Points */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4 h-4 text-accent" />
+              </div>
+              <span className="text-xs xl:text-sm text-white/90 font-medium">
+                100% Live Arrival Guarantee across Bangladesh
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4 text-accent" />
+              </div>
+              <span className="text-xs xl:text-sm text-white/90 font-medium">
+                Over 500+ healthy aquatic species & bonsai varieties
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4 text-accent" />
+              </div>
+              <span className="text-xs xl:text-sm text-white/90 font-medium">
+                Free aquascaping & species compatibility guidance
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Card Wrapper */}
-        <div className="bg-white rounded-2xl border border-border shadow-xl p-6 sm:p-8 space-y-6">
-          {/* 1. GOOGLE SIGN IN BUTTON */}
+        {/* Bottom Micro Footer */}
+        <div className="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+          <span>© {new Date().getFullYear()} Asmual AquaNature</span>
+          <span className="text-accent/80 font-medium">Dhaka, Bangladesh</span>
+        </div>
+      </div>
+
+      {/* ========================================================= */}
+      {/* 2. RIGHT SIDE: LOGIN FORM & PROMINENT SIGN UP CALLOUT      */}
+      {/* ========================================================= */}
+      <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 overflow-y-auto">
+        {/* Mobile Header (Shown on mobile only) */}
+        <div className="flex lg:hidden items-center justify-between pb-6 mb-6 border-b border-border">
+          <Logo size="sm" />
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Shop</span>
+          </Link>
+        </div>
+
+        <div className="max-w-md w-full mx-auto my-auto space-y-6">
+          {/* HIGH FOCUS SIGN UP PROMOTION BANNER */}
+          <div className="p-4 rounded-xl bg-accent-soft border border-accent/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="text-center sm:text-left">
+              <p className="text-xs font-bold text-primary">
+                New to Asmual AquaNature?
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Create a free account in 30 seconds for member rewards.
+              </p>
+            </div>
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs shadow-md transition-all duration-200 shrink-0 hover:scale-105"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Sign Up Here</span>
+            </Link>
+          </div>
+
+          {/* Form Header */}
+          <div className="space-y-1 text-left">
+            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">
+              Sign In to Your Account
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Enter your credentials or authenticate instantly with Google.
+            </p>
+          </div>
+
+          {/* GOOGLE SIGN IN BUTTON */}
           <div>
             <button
               type="button"
@@ -133,12 +281,12 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative flex items-center justify-center">
             <div className="w-full border-t border-border" />
-            <span className="absolute bg-white px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="absolute bg-background px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Or with email
             </span>
           </div>
 
-          {/* 2. EMAIL & PASSWORD FORM */}
+          {/* EMAIL & PASSWORD FORM */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-1.5">
@@ -218,11 +366,11 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Submit Button (Pill Shape) */}
+            {/* Submit Button (Primary Pill Button) */}
             <button
               type="submit"
               disabled={isLoading || isGoogleLoading}
-              className="w-full py-3 px-6 rounded-full bg-primary hover:bg-primary-dark text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              className="w-full py-3.5 px-6 rounded-full bg-primary hover:bg-primary-dark text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isLoading ? (
                 <>
@@ -238,9 +386,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Quick Demo Login Option */}
+          {/* Quick Demo Credentials */}
           <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <span>Testing the website?</span>
+            <span>Testing the app?</span>
             <button
               type="button"
               onClick={handleDemoFill}
@@ -252,16 +400,18 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer Link to Register */}
-        <p className="text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="font-bold text-primary hover:text-accent transition-colors duration-200"
-          >
-            Create an Account →
-          </Link>
-        </p>
+        {/* Bottom Prominent Sign Up Link */}
+        <div className="pt-6 mt-6 border-t border-border text-center">
+          <p className="text-sm text-muted-foreground">
+            Don&apos;t have an account yet?{" "}
+            <Link
+              href="/register"
+              className="font-extrabold text-primary hover:text-accent underline decoration-accent decoration-2 underline-offset-4 transition-colors"
+            >
+              Create an Account Now →
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
