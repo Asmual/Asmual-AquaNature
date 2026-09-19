@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,11 +35,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col"
+        className="min-h-screen bg-background text-foreground antialiased font-sans flex flex-col selection:bg-accent-soft selection:text-primary"
         suppressHydrationWarning
       >
         <Navbar />
-        <div className="flex-1">{children}</div>
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );
