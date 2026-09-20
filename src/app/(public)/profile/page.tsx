@@ -20,8 +20,10 @@ import {
   ArrowLeft,
   Save,
   CheckCircle2,
+  Upload,
 } from "lucide-react";
 import { useSession, authClient } from "@/lib/auth-client";
+import { uploadToImgBB } from "@/lib/imgbb";
 
 const AQUATIC_AVATARS = [
   {
@@ -84,7 +86,41 @@ export default function ProfilePage() {
   const [customAvatarUrl, setCustomAvatarUrl] = useState("");
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
+  const [isUploadingToImgBB, setIsUploadingToImgBB] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "avatar" | "settings">("overview");
+
+  // Handle direct file upload to ImgBB
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file (PNG, JPG, WEBP)");
+      return;
+    }
+
+    if (file.size > 16 * 1024 * 1024) {
+      toast.error("Image file size must be smaller than 16MB");
+      return;
+    }
+
+    setIsUploadingToImgBB(true);
+    const toastId = toast.loading("Uploading photo to ImgBB...");
+    try {
+      const uploadedUrl = await uploadToImgBB(file);
+      setCustomAvatarUrl(uploadedUrl);
+      setChosenAvatar(uploadedUrl);
+      toast.success("Image uploaded to ImgBB! Click 'Save New Avatar' to apply.", {
+        id: toastId,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to upload image";
+      toast.error(msg, { id: toastId });
+    } finally {
+      setIsUploadingToImgBB(false);
+      e.target.value = "";
+    }
+  };
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -428,6 +464,49 @@ export default function ProfilePage() {
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Direct Device Upload (Powered by ImgBB) */}
+            <div className="pt-2 border-t border-border space-y-3">
+              <label className="block text-xs font-semibold text-foreground">
+                Upload Photo from Device (ImgBB Cloud Hosting)
+              </label>
+              <div className="p-4 rounded-2xl border-2 border-dashed border-border hover:border-accent bg-surface/50 text-center space-y-2.5 transition-colors">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center text-primary mb-1">
+                    <Upload className="w-5 h-5 text-accent" />
+                  </div>
+                  <p className="text-xs font-bold text-primary">
+                    Upload Your Own Avatar Picture
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Directly uploads to ImgBB and instantly sets your account avatar.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-sm cursor-pointer transition-all duration-200">
+                    {isUploadingToImgBB ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Uploading to ImgBB...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4" />
+                        <span>Select Image File</span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={isUploadingToImgBB}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
 
