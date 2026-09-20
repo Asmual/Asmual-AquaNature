@@ -2,19 +2,26 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error("Please add your MONGODB_URI to .env.local");
-}
+const uri =
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Asmual-AquaNature";
 
 const client = new MongoClient(uri, { family: 4 });
 const db = client.db("Asmual-AquaNature");
 
+const getBaseUrl = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+};
+
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-  secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  secret:
+    process.env.BETTER_AUTH_SECRET ||
+    "default_asmual_aqua_nature_secret_key_minimum_32_characters",
+  baseURL: getBaseUrl(),
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -40,3 +47,4 @@ export const auth = betterAuth({
     },
   },
 });
+

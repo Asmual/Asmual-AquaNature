@@ -1,11 +1,8 @@
 import { MongoClient } from "mongodb";
-
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error("Please add your MONGODB_URI to .env.local");
-}
-
+ 
+const uri =
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Asmual-AquaNature";
+ 
 const options = {
   family: 4,
 };

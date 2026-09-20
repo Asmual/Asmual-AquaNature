@@ -1,13 +1,17 @@
 import Hero from "@/components/home/Hero";
+import FeaturedCategories from "@/components/home/FeaturedCategories";
 import SectionHeading from "@/components/shared/SectionHeading";
 
 export default function Home() {
   return (
     <div className="w-full">
-      {/* 1. HERO SECTION WITH WIDE BANNER AND GLASSY CATEGORIES */}
+      {/* 1. HERO SECTION (FITS FULL SCREEN BELOW NAVBAR WITHOUT OVERFLOW) */}
       <Hero />
 
-      {/* 2. VALUE & INTRODUCTORY SECTION */}
+      {/* 2. 7 FEATURED CATEGORY CIRCLES */}
+      <FeaturedCategories />
+
+      {/* 3. VALUE & INTRODUCTORY SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <SectionHeading
           badge="Our Specializations"
