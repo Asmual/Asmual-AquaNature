@@ -261,9 +261,9 @@ export const Footer = () => {
 
       {/* 3. Bottom Legal & Payment Options */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-white/10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60 text-center sm:text-left">
           <p>© {new Date().getFullYear()} Asmual AquaNature. All Rights Reserved.</p>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2">
             <span className="text-[11px] text-white/40">Secure Payments:</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-white/90 text-[10px] font-semibold">bKash</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-white/90 text-[10px] font-semibold">Nagad</span>

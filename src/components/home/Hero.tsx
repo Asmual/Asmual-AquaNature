@@ -59,10 +59,10 @@ export const Hero = () => {
             </p>
 
             {/* Action Buttons (Pill Shapes with High Contrast) */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
               <Link
                 href="#categories"
-                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs sm:text-sm shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs sm:text-sm shadow-md hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span>Explore All Categories</span>
                 <ArrowRight className="w-4 h-4" />
@@ -70,7 +70,7 @@ export const Hero = () => {
 
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md font-semibold text-xs sm:text-sm hover:-translate-y-0.5 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md font-semibold text-xs sm:text-sm hover:-translate-y-0.5 transition-all duration-200"
               >
                 <span>Consult an Aquascaper</span>
                 <ChevronRight className="w-4 h-4 text-accent" />
@@ -78,7 +78,7 @@ export const Hero = () => {
             </div>
 
             {/* Micro Trust Points */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-white/80">
+            <div className="pt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/80">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-accent shrink-0" />
                 <span>100% Live Arrival Warranty</span>

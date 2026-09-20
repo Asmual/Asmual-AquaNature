@@ -104,7 +104,7 @@ export default function FeaturedCategories() {
                 href={cat.href}
                 onMouseEnter={() => setActiveCategory(idx)}
                 onMouseLeave={() => setActiveCategory(null)}
-                className={`group relative flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 ${
+                className={`group relative flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 last:col-span-2 sm:last:col-span-1 max-sm:max-w-[240px] max-sm:mx-auto max-sm:w-full ${
                   isActive ? "border-accent ring-2 ring-accent/30" : "border-border hover:border-accent"
                 }`}
               >
