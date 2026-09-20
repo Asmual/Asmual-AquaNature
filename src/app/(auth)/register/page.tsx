@@ -89,11 +89,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-background selection:bg-accent-soft selection:text-primary">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-background selection:bg-accent-soft selection:text-primary overflow-y-auto lg:overflow-hidden">
       {/* ========================================================================= */}
       {/* 1. LEFT SIDE: HERO IMAGE WITH SOFT BLUR & AQUATIC NARRATIVE               */}
       {/* ========================================================================= */}
-      <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative flex-col justify-between p-8 xl:p-12 overflow-hidden bg-primary text-white">
+      <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 relative flex-col justify-between p-6 xl:p-8 overflow-hidden bg-primary text-white h-full">
         {/* Background Image: public/images/Login-SignUp.jpg */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -109,24 +109,24 @@ export default function RegisterPage() {
 
         {/* Top Header: Logo Icon + Back to Shop */}
         <div className="relative z-10 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
               <Image
                 src="/images/Asmual-AquaNature-logo.png"
                 alt="Logo"
-                width={40}
-                height={40}
+                width={32}
+                height={32}
                 className="w-full h-full object-contain rounded-full"
               />
             </div>
-            <span className="font-heading font-extrabold text-lg text-white tracking-tight">
+            <span className="font-heading font-extrabold text-base text-white tracking-tight">
               Aqua<span className="text-accent">Nature</span>
             </span>
           </Link>
 
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-md border border-white/20 transition-all duration-200"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-md border border-white/20 transition-all duration-200"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Shop</span>
@@ -134,42 +134,42 @@ export default function RegisterPage() {
         </div>
 
         {/* Center Content */}
-        <div className="relative z-10 my-auto py-6 space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/30 text-accent text-xs font-semibold backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 text-accent" />
+        <div className="relative z-10 my-auto py-4 space-y-3.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/20 border border-accent/30 text-accent text-[11px] font-semibold backdrop-blur-md">
+            <Sparkles className="w-3 h-3 text-accent" />
             <span>Join Aqua Collectors Club</span>
           </div>
 
-          <h2 className="font-heading font-extrabold text-2xl xl:text-3xl text-white tracking-tight leading-snug">
+          <h2 className="font-heading font-extrabold text-xl xl:text-2xl text-white tracking-tight leading-snug">
             Start Your Aquatic & Living Nature Journey.
           </h2>
 
-          <p className="text-xs xl:text-sm text-white/85 font-normal leading-relaxed">
+          <p className="text-xs text-white/85 font-normal leading-relaxed line-clamp-3">
             Create an account to gain priority access to imported rare Betta drops, member pricing on aquatic flora, and personal consultations with our master aquascapers.
           </p>
 
-          <div className="space-y-2.5 pt-1">
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-7 h-7 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
-                <Fish className="w-4 h-4 text-accent" />
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-6 h-6 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
+                <Fish className="w-3.5 h-3.5 text-accent" />
               </div>
               <p className="text-xs text-white/90 font-medium">
                 Early access to new imported fish strains & alerts
               </p>
             </div>
 
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-7 h-7 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
-                <Leaf className="w-4 h-4 text-accent" />
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-6 h-6 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
+                <Leaf className="w-3.5 h-3.5 text-accent" />
               </div>
               <p className="text-xs text-white/90 font-medium">
                 Tailored fertilizer, plant light & dosing plans
               </p>
             </div>
 
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-7 h-7 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4 text-accent" />
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/15">
+              <div className="w-6 h-6 rounded-full bg-accent/25 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               </div>
               <p className="text-xs text-white/90 font-medium">
                 100% Live Arrival Guarantee on all deliveries
@@ -179,7 +179,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom Footer */}
-        <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-white/65">
+        <div className="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/65">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
             <span>Guaranteed Healthy Stock</span>
@@ -191,21 +191,21 @@ export default function RegisterPage() {
       {/* ========================================================================= */}
       {/* 2. RIGHT SIDE: COMPACT CREATE ACCOUNT FORM (FITS ON ONE SCREEN)           */}
       {/* ========================================================================= */}
-      <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-center items-center px-4 py-6 sm:px-8 lg:px-12">
-        <div className="max-w-sm sm:max-w-md w-full space-y-4">
+      <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-center items-center px-4 py-4 sm:px-8 lg:px-12 h-full overflow-y-auto">
+        <div className="max-w-sm sm:max-w-md w-full space-y-3">
           {/* Top Logo & Title: ONLY "Create Account" with Logo, No Bulky Clutter */}
-          <div className="flex flex-col items-center text-center space-y-1.5">
-            <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-border shadow-sm p-0.5 bg-surface shrink-0">
+          <div className="flex flex-col items-center text-center space-y-1">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border shadow-sm p-0.5 bg-surface shrink-0">
               <Image
                 src="/images/Asmual-AquaNature-logo.png"
                 alt="Logo"
-                width={48}
-                height={48}
+                width={40}
+                height={40}
                 priority
                 className="w-full h-full object-contain rounded-full"
               />
             </div>
-            <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-primary tracking-tight">
+            <h1 className="font-heading font-extrabold text-2xl text-primary tracking-tight">
               Create Account
             </h1>
           </div>
@@ -216,7 +216,7 @@ export default function RegisterPage() {
               type="button"
               onClick={handleGoogleSignUp}
               disabled={isGoogleLoading || isLoading}
-              className="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-full border border-border bg-surface hover:bg-white hover:border-accent hover:shadow-sm text-foreground text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2.5 py-1.5 sm:py-2 px-4 rounded-full border border-border bg-surface hover:bg-white hover:border-accent hover:shadow-sm text-foreground text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-60"
             >
               {isGoogleLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -247,90 +247,90 @@ export default function RegisterPage() {
           {/* Divider */}
           <div className="relative flex items-center justify-center">
             <div className="w-full border-t border-border" />
-            <span className="absolute bg-background px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="absolute bg-background px-2.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Or with email
             </span>
           </div>
 
           {/* REGISTRATION FORM (Clean, Compact Spacing) */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
             {/* Full Name */}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <label className="block text-xs font-semibold text-foreground">
                 Full Name
               </label>
               <div className="relative flex items-center">
-                <User className="w-4 h-4 text-muted-foreground absolute left-3.5 pointer-events-none" />
+                <User className="w-3.5 h-3.5 text-muted-foreground absolute left-3 pointer-events-none" />
                 <input
                   type="text"
                   {...register("name")}
                   placeholder="Enter Your Full Name"
-                  className="w-full bg-surface border border-border rounded-[10px] pl-10 pr-3.5 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
+                  className="w-full bg-surface border border-border rounded-[10px] pl-9 pr-3.5 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                 />
               </div>
               {errors.name && (
-                <p className="text-[11px] text-danger font-medium">
+                <p className="text-[10px] text-danger font-medium">
                   {errors.name.message}
                 </p>
               )}
             </div>
 
             {/* Email Address */}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <label className="block text-xs font-semibold text-foreground">
                 Email Address
               </label>
               <div className="relative flex items-center">
-                <Mail className="w-4 h-4 text-muted-foreground absolute left-3.5 pointer-events-none" />
+                <Mail className="w-3.5 h-3.5 text-muted-foreground absolute left-3 pointer-events-none" />
                 <input
                   type="email"
                   {...register("email")}
                   placeholder="Enter Your Email"
-                  className="w-full bg-surface border border-border rounded-[10px] pl-10 pr-3.5 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
+                  className="w-full bg-surface border border-border rounded-[10px] pl-9 pr-3.5 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                 />
               </div>
               {errors.email && (
-                <p className="text-[11px] text-danger font-medium">
+                <p className="text-[10px] text-danger font-medium">
                   {errors.email.message}
                 </p>
               )}
             </div>
 
             {/* Phone Number */}
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <label className="block text-xs font-semibold text-foreground">
                 Phone Number <span className="text-muted-foreground font-normal lowercase">(optional)</span>
               </label>
               <div className="relative flex items-center">
-                <Phone className="w-4 h-4 text-muted-foreground absolute left-3.5 pointer-events-none" />
+                <Phone className="w-3.5 h-3.5 text-muted-foreground absolute left-3 pointer-events-none" />
                 <input
                   type="tel"
                   {...register("phoneNumber")}
                   placeholder="Enter Your Phone Number"
-                  className="w-full bg-surface border border-border rounded-[10px] pl-10 pr-3.5 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
+                  className="w-full bg-surface border border-border rounded-[10px] pl-9 pr-3.5 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                 />
               </div>
             </div>
 
             {/* Password & Confirm Password (Two Columns for space optimization) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {/* Password */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <label className="block text-xs font-semibold text-foreground">
                   Password
                 </label>
                 <div className="relative flex items-center">
-                  <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none" />
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground absolute left-3 pointer-events-none" />
                   <input
                     type={showPassword ? "text" : "password"}
                     {...register("password")}
                     placeholder="Enter Your Password"
-                    className="w-full bg-surface border border-border rounded-[10px] pl-9 pr-8 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
+                    className="w-full bg-surface border border-border rounded-[10px] pl-8 pr-7 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 text-muted-foreground hover:text-primary transition-colors p-1"
+                    className="absolute right-2 text-muted-foreground hover:text-primary transition-colors p-0.5"
                     aria-label="Toggle password visibility"
                   >
                     {showPassword ? (
@@ -348,22 +348,22 @@ export default function RegisterPage() {
               </div>
 
               {/* Confirm Password */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <label className="block text-xs font-semibold text-foreground">
                   Confirm Password
                 </label>
                 <div className="relative flex items-center">
-                  <Lock className="w-4 h-4 text-muted-foreground absolute left-3 pointer-events-none" />
+                  <Lock className="w-3.5 h-3.5 text-muted-foreground absolute left-3 pointer-events-none" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword")}
                     placeholder="Confirm Your Password"
-                    className="w-full bg-surface border border-border rounded-[10px] pl-9 pr-8 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
+                    className="w-full bg-surface border border-border rounded-[10px] pl-8 pr-7 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:bg-white focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all duration-200"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2 text-muted-foreground hover:text-primary transition-colors p-1"
+                    className="absolute right-2 text-muted-foreground hover:text-primary transition-colors p-0.5"
                     aria-label="Toggle confirm password visibility"
                   >
                     {showConfirmPassword ? (
@@ -416,7 +416,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading || isGoogleLoading}
-              className="w-full py-2.5 px-6 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-1"
+              className="w-full py-2 px-6 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-1"
             >
               {isLoading ? (
                 <>
@@ -433,7 +433,7 @@ export default function RegisterPage() {
           </form>
 
           {/* Prominent Sign In Toggle Callout */}
-          <div className="pt-2.5 border-t border-border text-center">
+          <div className="pt-2 border-t border-border text-center">
             <p className="text-xs text-muted-foreground">
               Already have an account?{" "}
               <Link
