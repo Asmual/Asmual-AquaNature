@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   Search,
   ShoppingBag,
@@ -16,14 +19,32 @@ import {
   Fish,
   Leaf,
   Flame,
+  LogOut,
+  Loader2,
 } from "lucide-react";
 import Logo from "./Logo";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export const Navbar = () => {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +66,33 @@ export const Navbar = () => {
     { name: "Bonsai Plants", desc: "Living miniature trees and dwarf figs", href: "#categories" },
     { name: "Flower Plants", desc: "Water lilies, roses, seasonal bloomers", href: "#categories" },
   ];
+
+  const handleSignOut = async () => {
+    setIsLoggingOut(true);
+    try {
+      await signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Logged out successfully");
+            setProfileDropdownOpen(false);
+            setMobileMenuOpen(false);
+            router.push("/");
+            router.refresh();
+          },
+        },
+      });
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to log out";
+      toast.error(errorMsg);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const userAvatar = session?.user?.image || "/images/default-avatar.svg";
+  const userName = session?.user?.name || "Aqua Member";
+  const userEmail = session?.user?.email || "";
+  const userRole = (session?.user as { role?: string })?.role || "Member";
 
   return (
     <header className="w-full sticky top-0 z-50 transition-all duration-200">
@@ -134,13 +182,121 @@ export const Navbar = () => {
                 </span>
               </button>
 
-              <Link
-                href="/login"
-                className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <User className="w-4 h-4" />
-                <span>Account</span>
-              </Link>
+              {/* User Account / Avatar Dropdown */}
+              {isPending ? (
+                <div className="w-8 h-8 rounded-full bg-surface border border-border animate-pulse shrink-0" />
+              ) : session?.user ? (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    className="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-surface border border-transparent hover:border-border transition-all duration-200 cursor-pointer group"
+                    aria-label="Account menu"
+                  >
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-accent shadow-sm shrink-0 bg-primary-dark">
+                      <Image
+                        src={userAvatar}
+                        alt={userName}
+                        fill
+                        sizes="32px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <span className="hidden xl:inline text-xs font-bold text-primary max-w-[85px] truncate">
+                      {userName.split(" ")[0]}
+                    </span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
+                        profileDropdownOpen ? "rotate-180 text-primary" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Profile Dropdown Menu */}
+                  {profileDropdownOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-64 z-50 rounded-2xl bg-white border border-border shadow-xl p-2 animate-in fade-in-50 slide-in-from-top-2 duration-200">
+                      {/* User Header */}
+                      <div className="flex items-center gap-3 p-3 bg-surface rounded-xl border border-border/60">
+                        <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-accent shrink-0 bg-primary-dark">
+                          <Image
+                            src={userAvatar}
+                            alt={userName}
+                            fill
+                            sizes="44px"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-primary truncate leading-tight">
+                            {userName}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                            {userEmail}
+                          </p>
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-accent-soft text-primary border border-accent/30">
+                            {userRole}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Navigation Links */}
+                      <div className="py-1.5 space-y-0.5">
+                        <Link
+                          href="/profile"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
+                        >
+                          <User className="w-4 h-4 text-accent" />
+                          <span>View Profile</span>
+                        </Link>
+
+                        <Link
+                          href="#orders"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
+                        >
+                          <ShoppingBag className="w-4 h-4 text-primary" />
+                          <span>My Orders</span>
+                        </Link>
+
+                        <Link
+                          href="#wishlist"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
+                        >
+                          <Heart className="w-4 h-4 text-danger" />
+                          <span>Saved Wishlist</span>
+                        </Link>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t border-border my-1" />
+
+                      {/* Logout Button */}
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        disabled={isLoggingOut}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-danger hover:bg-red-50 transition-colors disabled:opacity-60 cursor-pointer"
+                      >
+                        {isLoggingOut ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-danger" />
+                        ) : (
+                          <LogOut className="w-4 h-4" />
+                        )}
+                        <span>{isLoggingOut ? "Logging out..." : "Log Out"}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Sign In</span>
+                </Link>
+              )}
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -369,14 +525,56 @@ export const Navbar = () => {
             </div>
 
             <div className="pt-2 border-t border-border">
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold flex items-center justify-center gap-2"
-              >
-                <User className="w-4 h-4" />
-                <span>My Account / Sign In</span>
-              </Link>
+              {session?.user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-2.5 bg-surface rounded-xl border border-border">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-accent shrink-0 bg-primary-dark">
+                      <Image
+                        src={userAvatar}
+                        alt={userName}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-primary truncate">
+                        {userName}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground truncate">
+                        {userEmail}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-2 px-3 rounded-lg bg-surface hover:bg-accent-soft text-primary text-xs font-semibold flex items-center justify-center gap-1.5"
+                    >
+                      <User className="w-3.5 h-3.5 text-accent" />
+                      <span>View Profile</span>
+                    </Link>
+                    <button
+                      onClick={handleSignOut}
+                      disabled={isLoggingOut}
+                      className="py-2 px-3 rounded-lg bg-red-50 hover:bg-red-100 text-danger text-xs font-semibold flex items-center justify-center gap-1.5"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-semibold flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span>My Account / Sign In</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
