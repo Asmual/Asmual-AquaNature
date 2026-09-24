@@ -35,8 +35,8 @@ export const Navbar = () => {
   const { data: session, isPending } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileFishOpen, setMobileFishOpen] = useState(true);
-  const [mobilePlantsOpen, setMobilePlantsOpen] = useState(true);
+  const [mobileFishOpen, setMobileFishOpen] = useState(false);
+  const [mobilePlantsOpen, setMobilePlantsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -47,8 +47,9 @@ export const Navbar = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
-  // Close profile dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -56,6 +57,9 @@ export const Navbar = () => {
       }
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setSearchFocused(false);
+      }
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setActiveDropdown(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -254,16 +258,16 @@ export const Navbar = () => {
             {/* Action Icons & User Controls (NO CART, NO WISHLIST) */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               {/* Knowledge Hub Badge */}
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-soft text-primary border border-accent/30 text-xs font-bold">
+              <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-soft text-primary border border-accent/30 text-xs font-bold">
                 <BookOpen className="w-3.5 h-3.5 text-accent" />
                 <span>Encyclopedia</span>
               </div>
 
               {/* User Account / Avatar Dropdown */}
               {isPending ? (
-                <div className="hidden sm:block w-8 h-8 rounded-full bg-surface border border-border animate-pulse shrink-0" />
+                <div className="hidden lg:block w-8 h-8 rounded-full bg-surface border border-border animate-pulse shrink-0" />
               ) : session?.user ? (
-                <div className="hidden sm:block relative" ref={dropdownRef}>
+                <div className="hidden lg:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                     className="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-surface border border-transparent hover:border-border transition-all duration-200 cursor-pointer group"
@@ -354,7 +358,7 @@ export const Navbar = () => {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-2xs hover:shadow-xs transition-all duration-200"
+                  className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-2xs hover:shadow-xs transition-all duration-200"
                 >
                   <User className="w-3.5 h-3.5" />
                   <span>Sign In</span>
@@ -374,7 +378,7 @@ export const Navbar = () => {
           </div>
 
           {/* DESKTOP NAVIGATION LINKS: NO ARROWS, NO SLASHES, CLEAN 1-2 WORD TITLES */}
-          <nav className="hidden lg:flex items-center justify-between pt-3 mt-2 border-t border-border/60">
+          <nav ref={navRef} className="hidden lg:flex items-center justify-between pt-3 mt-2 border-t border-border/60">
             <ul className="flex items-center gap-1.5 xl:gap-2">
               <li>
                 <Link
@@ -386,18 +390,22 @@ export const Navbar = () => {
                 </Link>
               </li>
 
-              {/* Fishes Dropdown - with ChevronDown indicator */}
+              {/* Fishes Dropdown - with ChevronDown indicator & Click/Hover Toggle */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("fish")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown((prev) => (prev === "fish" ? null : "fish"))}
+                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+                >
                   <Fish className="w-4 h-4 text-primary" />
                   <span>Fishes</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
-                      activeDropdown === "fish" ? "rotate-180 text-primary" : ""
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeDropdown === "fish" ? "rotate-180 text-primary" : "text-muted-foreground"
                     }`}
                   />
                 </button>
@@ -409,6 +417,7 @@ export const Navbar = () => {
                         <Link
                           key={idx}
                           href={item.href}
+                          onClick={() => setActiveDropdown(null)}
                           className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
                         >
                           {item.name}
@@ -419,18 +428,22 @@ export const Navbar = () => {
                 )}
               </li>
 
-              {/* Plants Dropdown - with ChevronDown indicator */}
+              {/* Plants Dropdown - with ChevronDown indicator & Click/Hover Toggle */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("plants")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => setActiveDropdown((prev) => (prev === "plants" ? null : "plants"))}
+                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+                >
                   <Leaf className="w-4 h-4 text-accent" />
                   <span>Plants</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
-                      activeDropdown === "plants" ? "rotate-180 text-accent" : ""
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      activeDropdown === "plants" ? "rotate-180 text-accent" : "text-muted-foreground"
                     }`}
                   />
                 </button>
@@ -442,6 +455,7 @@ export const Navbar = () => {
                         <Link
                           key={idx}
                           href={item.href}
+                          onClick={() => setActiveDropdown(null)}
                           className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
                         >
                           {item.name}
@@ -522,38 +536,34 @@ export const Navbar = () => {
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
           {/* 1. Single-Line User State (Compact, No Large Section) */}
           {session?.user ? (
-            <div className="space-y-2 pb-2.5 border-b border-border/70">
+            <div className="space-y-1.5 pb-2 border-b border-border/70">
               {/* Single Line User Info */}
-              <Link
-                href="/profile"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between gap-2.5 px-3 py-2 bg-surface hover:bg-surface-hover rounded-xl border border-border/70 transition-colors group"
-              >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="relative w-7 h-7 rounded-full overflow-hidden border border-accent shrink-0 bg-primary-dark">
+              <div className="flex items-center justify-between gap-2.5 px-3 py-1.5 bg-surface rounded-xl border border-border/70">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden border border-accent shrink-0 bg-primary-dark">
                     <Image
                       src={userAvatar}
                       alt={userName}
                       fill
-                      sizes="28px"
+                      sizes="24px"
                       className="object-cover"
                     />
                   </div>
-                  <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                  <span className="text-xs font-bold text-foreground truncate">
                     {userName}
-                  </p>
+                  </span>
                 </div>
                 <span className="text-[9px] px-2 py-0.5 rounded-full bg-accent-soft text-primary font-bold uppercase tracking-wider shrink-0">
                   {userRole}
                 </span>
-              </Link>
+              </div>
 
               {/* Logout Button directly below User Name */}
               <button
                 type="button"
                 onClick={handleSignOut}
                 disabled={isLoggingOut}
-                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-red-50 hover:bg-red-100 text-danger border border-red-200/80 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl bg-red-50 hover:bg-red-100 text-danger border border-red-200/80 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {isLoggingOut ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-danger" />
@@ -564,9 +574,9 @@ export const Navbar = () => {
               </button>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-2 px-3 py-2 bg-surface rounded-xl border border-border/70">
+            <div className="flex items-center justify-between gap-2 px-3 py-1.5 bg-surface rounded-xl border border-border/70">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 rounded-full bg-accent-soft flex items-center justify-center text-primary shrink-0">
+                <div className="w-6 h-6 rounded-full bg-accent-soft flex items-center justify-center text-primary shrink-0">
                   <User className="w-3.5 h-3.5 text-primary" />
                 </div>
                 <span className="text-xs font-semibold text-foreground truncate">
@@ -577,14 +587,14 @@ export const Navbar = () => {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-white text-foreground text-xs font-semibold transition-colors"
+                  className="px-2.5 py-1 rounded-lg border border-border hover:bg-white text-foreground text-xs font-semibold transition-colors"
                 >
                   Register
                 </Link>
