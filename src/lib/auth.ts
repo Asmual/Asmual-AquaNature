@@ -47,6 +47,16 @@ export const auth = betterAuth({
         required: false,
         defaultValue: "",
       },
+      gender: {
+        type: "string",
+        required: false,
+        defaultValue: "",
+      },
+      location: {
+        type: "string",
+        required: false,
+        defaultValue: "",
+      },
       role: {
         type: "string",
         required: false,
