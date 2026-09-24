@@ -69,3 +69,5 @@ export interface TApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+export type { TCategoryItem, TCategoryMeta } from "@/data/categories";
