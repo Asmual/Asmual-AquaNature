@@ -8,7 +8,7 @@ export default function Home() {
       {/* 1. HERO SECTION (FITS FULL SCREEN BELOW NAVBAR WITHOUT OVERFLOW) */}
       <Hero />
 
-      {/* 2. 7 FEATURED CATEGORY CIRCLES */}
+      {/* 2. 6 CORE FEATURED CATEGORIES */}
       <FeaturedCategories />
 
       {/* 3. VALUE & INTRODUCTORY SECTION */}
