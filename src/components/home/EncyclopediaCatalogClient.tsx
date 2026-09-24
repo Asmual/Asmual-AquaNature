@@ -1,25 +1,17 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { 
   Search, 
   X, 
   Layers, 
   Leaf, 
   Fish, 
-  Sparkles, 
-  SlidersHorizontal,
-  Compass,
   BookOpen,
   CheckCircle2,
-  TreePine,
-  Flower2
 } from "lucide-react";
 import { 
   TCategoryItem, 
-  TCategoryMeta, 
   CATEGORY_ITEMS, 
   CATEGORIES_META 
 } from "@/data/categories";
@@ -51,7 +43,7 @@ export default function EncyclopediaCatalogClient() {
         return false;
       }
 
-      // Search query across name, bengaliName, scientificName, regionalName, tags, and description
+      // Search query across name, bengaliName, scientificName, tags, and description
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase().trim();
         const matchesName = item.name.toLowerCase().includes(q);
@@ -72,36 +64,36 @@ export default function EncyclopediaCatalogClient() {
 
   return (
     <div className="w-full">
-      {/* 1. COMPACT ENCYCLOPEDIA HEADER BANNER */}
+      {/* 1. COMPACT ENCYCLOPEDIA HEADER BANNER IN ENGLISH */}
       <section className="bg-gradient-to-b from-primary/10 via-surface to-background border-b border-border py-8 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-primary text-xs font-extrabold uppercase tracking-wider border border-accent/20">
               <BookOpen className="w-3.5 h-3.5 text-accent" />
-              <span>উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত বিশ্বকোষ</span>
+              <span>Botanical &amp; Aquatic Encyclopedia</span>
             </div>
 
             <h1 className="font-heading font-extrabold text-2xl sm:text-4xl lg:text-5xl text-primary tracking-tight leading-tight">
-              প্রকৃতির প্রামাণ্য তথ্যভাণ্ডার ও পরিচর্যা নির্দেশিকা
+              Living Botanical &amp; Aquatic Knowledge Repository
             </h1>
 
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
-              ইনডোর প্ল্যান্টস, জীবন্ত বনসাই, জলজ পদ্ম-শাপলা এবং বিরল প্রজাতির ফাইটার ও গাপ্পি মাছের বৈজ্ঞানিক নাম, সূর্যালোক, আবহাওয়া ও পরিচর্যা সম্পর্কে বিস্তারিত জানুন।
+              Explore authentic scientific taxonomy, lighting requirements, climate adaptation, and comprehensive care guides for indoor plants, living bonsai art, water lilies, and show-grade aquarium fishes.
             </p>
 
-            {/* Quick Live Stats Pill */}
+            {/* Quick Live Stats Pill in English */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
                 <Leaf className="w-3.5 h-3.5 text-accent" />
-                <span>১০৮+ উদ্ভিদ প্রজাতি</span>
+                <span>108+ Flora Species</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
                 <Fish className="w-3.5 h-3.5 text-primary" />
-                <span>৪৬+ জলজ প্রজাতি</span>
+                <span>46+ Aquatic Species</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-emerald-700">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>সম্পূর্ণ উন্মুক্ত ও অবাণিজ্যিক</span>
+                <span>Free Open Knowledge Hub</span>
               </span>
             </div>
           </div>
@@ -120,7 +112,7 @@ export default function EncyclopediaCatalogClient() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="বাংলা, ইংরেজি বা বৈজ্ঞানিক নাম দিয়ে খুঁজুন (যেমন: শাপলা, Betta, Monstera, Ficus)..."
+                placeholder="Search by English, Bengali, or scientific name (e.g. Monstera, Betta, Water Lily, Ficus)..."
                 className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm bg-surface border border-border rounded-xl focus:outline-none focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20 transition-all text-foreground"
               />
               {searchQuery && (
@@ -148,7 +140,7 @@ export default function EncyclopediaCatalogClient() {
                     : "bg-surface text-foreground hover:bg-white border border-border"
                 }`}
               >
-                সকল জীববৈচিত্র্য
+                All Biodiversity
               </button>
 
               <button
@@ -166,7 +158,7 @@ export default function EncyclopediaCatalogClient() {
                 }`}
               >
                 <Leaf className="w-3.5 h-3.5 text-accent" />
-                <span>উদ্ভিদ জগত</span>
+                <span>Flora (Plants)</span>
               </button>
 
               <button
@@ -184,12 +176,12 @@ export default function EncyclopediaCatalogClient() {
                 }`}
               >
                 <Fish className="w-3.5 h-3.5 text-primary" />
-                <span>জলজ প্রাণী</span>
+                <span>Aquatic Fauna (Fishes)</span>
               </button>
             </div>
           </div>
 
-          {/* 6 Major Category Filter Pills */}
+          {/* 6 Major Category Filter Pills (Pure English, NO brackets) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <button
               type="button"
@@ -200,7 +192,7 @@ export default function EncyclopediaCatalogClient() {
                   : "bg-surface text-foreground hover:bg-white border-border"
               }`}
             >
-              <span>সকল ক্যাটাগরি</span>
+              <span>All Categories</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                 selectedCategory === "all" ? "bg-accent text-primary" : "bg-white text-muted-foreground"
               }`}>
@@ -229,7 +221,7 @@ export default function EncyclopediaCatalogClient() {
                   ) : (
                     <Fish className="w-3 h-3 text-accent" />
                   )}
-                  <span>{cat.bengaliName}</span>
+                  <span>{cat.name}</span>
                   <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                     isSelected ? "bg-accent text-primary" : "bg-surface text-muted-foreground"
                   }`}>
@@ -245,18 +237,18 @@ export default function EncyclopediaCatalogClient() {
             <div className="flex items-center gap-1.5 font-medium">
               <Layers className="w-3.5 h-3.5 text-accent" />
               <span>
-                প্রদর্শিত হচ্ছে <strong className="text-primary font-bold">{filteredItems.length}</strong> টি প্রামাণ্য প্রজাতি
+                Showing <strong className="text-primary font-bold">{filteredItems.length}</strong> documented species
               </span>
             </div>
 
             {/* Care level filter buttons */}
             <div className="flex items-center gap-1.5">
-              <span className="hidden sm:inline font-semibold text-[11px]">যত্নের মাত্রা:</span>
+              <span className="hidden sm:inline font-semibold text-[11px]">Care Level:</span>
               {[
-                { label: "সকল", value: "all" },
-                { label: "সহজ", value: "Easy" },
-                { label: "মাঝারি", value: "Moderate" },
-                { label: "অভিজ্ঞ", value: "Advanced" },
+                { label: "All", value: "all" },
+                { label: "Easy", value: "Easy" },
+                { label: "Moderate", value: "Moderate" },
+                { label: "Advanced", value: "Advanced" },
               ].map((c) => (
                 <button
                   key={c.value}
@@ -283,7 +275,7 @@ export default function EncyclopediaCatalogClient() {
                   }}
                   className="ml-2 text-primary font-bold hover:underline cursor-pointer text-[11px]"
                 >
-                  রিসেট
+                  Reset
                 </button>
               )}
             </div>
@@ -309,10 +301,10 @@ export default function EncyclopediaCatalogClient() {
               <Search className="w-6 h-6" />
             </div>
             <h3 className="font-heading font-bold text-lg text-foreground">
-              কোনো তথ্য পাওয়া যায়নি
+              No matching species found
             </h3>
             <p className="text-xs text-muted-foreground">
-              &quot;{searchQuery}&quot; দিয়ে কোনো প্রজাতি পাওয়া যায়নি। অনুগ্রহ করে বানান পরীক্ষা করুন অথবা ফিল্টার পরিবর্তন করুন।
+              We couldn&apos;t find any species matching &quot;{searchQuery}&quot;. Please check your spelling or adjust filters.
             </p>
             <button
               type="button"
@@ -324,7 +316,7 @@ export default function EncyclopediaCatalogClient() {
               }}
               className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors cursor-pointer"
             >
-              সকল ফিল্টার রিসেট করুন
+              Reset All Filters
             </button>
           </div>
         )}

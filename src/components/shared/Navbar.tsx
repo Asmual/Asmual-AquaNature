@@ -23,14 +23,14 @@ import {
   ChevronRight,
   Layers,
   BookOpen,
-  Compass,
 } from "lucide-react";
 import Logo from "./Logo";
 import { useSession, signOut } from "@/lib/auth-client";
 import { 
   CATEGORY_ITEMS, 
   TCategoryItem, 
-  getSpecimenRegionalName 
+  getSpecimenDisplayTitle,
+  getSpecimenScientificName
 } from "@/data/categories";
 import ItemDetailModal from "@/components/category/ItemDetailModal";
 
@@ -101,20 +101,20 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Clean category lists - ONLY titles, NO paragraphs or descriptions
+  // Clean category lists - ONLY titles, NO brackets, NO paragraphs
   const fishCategories = [
-    { name: "Fighter / Betta (ফাইটার/বেটা)", href: "/category/fighter" },
-    { name: "Pureline Guppies (পিয়োরলাইন গাপ্পি)", href: "/category/guppy" },
-    { name: "SeaWater Fish (সামুদ্রিক মাছ)", href: "/category/marine" },
+    { name: "Fighter / Betta", href: "/category/fighter" },
+    { name: "Pureline Guppies", href: "/category/guppy" },
+    { name: "SeaWater Fish", href: "/category/marine" },
   ];
 
   const plantCategories = [
-    { name: "Indoor Plants (ইনডোর প্ল্যান্টস)", href: "/category/indoor" },
-    { name: "Bonsai Plants (বনসাই বৃক্ষ)", href: "/category/bonsai" },
-    { name: "Flower Plants (ফুল ও জলজ পদ্ম)", href: "/category/flowers" },
+    { name: "Indoor Plants", href: "/category/indoor" },
+    { name: "Bonsai Plants", href: "/category/bonsai" },
+    { name: "Flower Plants", href: "/category/flowers" },
   ];
 
-  // Instant live search results matching English, Bengali, scientific, or regional name
+  // Instant live search results matching English, Bengali, scientific, or category
   const liveSearchResults = React.useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase().trim();
@@ -124,8 +124,7 @@ export const Navbar = () => {
       const matchScientific = item.scientificName?.toLowerCase().includes(q) || false;
       const matchCategory = item.categoryName.toLowerCase().includes(q);
       const matchTags = item.tags.some((t) => t.toLowerCase().includes(q));
-      const matchRegional = getSpecimenRegionalName(item).toLowerCase().includes(q);
-      return matchName || matchBengali || matchScientific || matchCategory || matchTags || matchRegional;
+      return matchName || matchBengali || matchScientific || matchCategory || matchTags;
     }).slice(0, 6);
   }, [searchQuery]);
 
@@ -135,7 +134,7 @@ export const Navbar = () => {
       await signOut({
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Logged out successfully");
+            toast.success("Signed out successfully");
             setProfileDropdownOpen(false);
             setMobileMenuOpen(false);
             router.push("/");
@@ -144,7 +143,7 @@ export const Navbar = () => {
         },
       });
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to log out";
+      const errorMsg = err instanceof Error ? err.message : "Failed to sign out";
       toast.error(errorMsg);
     } finally {
       setIsLoggingOut(false);
@@ -187,7 +186,7 @@ export const Navbar = () => {
                       setSearchFocused(true);
                     }}
                     onFocus={() => setSearchFocused(true)}
-                    placeholder="উদ্ভিদ বা মাছের নাম খুঁজুন (যেমন: শাপলা, Betta, Bonsai)..."
+                    placeholder="Search species (e.g. Monstera, Betta, Water Lily)..."
                     className="w-full bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                   />
                   {searchQuery && (
@@ -195,7 +194,7 @@ export const Navbar = () => {
                       onClick={() => setSearchQuery("")}
                       className="text-muted-foreground hover:text-foreground text-xs px-1.5"
                     >
-                      মুছুন
+                      Clear
                     </button>
                   )}
                 </div>
@@ -204,52 +203,53 @@ export const Navbar = () => {
                 {searchFocused && searchQuery.trim() && (
                   <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-border shadow-2xl overflow-hidden z-50 p-2 animate-in fade-in-50 slide-in-from-top-2 duration-200">
                     <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between border-b border-border/60">
-                      <span>অনুসন্ধানের ফলাফল ({liveSearchResults.length})</span>
-                      <span className="text-accent font-semibold">ক্লিক করে তথ্য দেখুন</span>
+                      <span>Search Results ({liveSearchResults.length})</span>
+                      <span className="text-accent font-semibold">Click to view guide</span>
                     </div>
 
                     {liveSearchResults.length > 0 ? (
                       <div className="divide-y divide-border/40 max-h-96 overflow-y-auto">
-                        {liveSearchResults.map((item) => (
-                          <div
-                            key={item.id}
-                            onClick={() => {
-                              setSelectedSpecimen(item);
-                              setSearchFocused(false);
-                            }}
-                            className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface transition-colors cursor-pointer group"
-                          >
-                            <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/80 shrink-0 bg-surface">
-                              <Image
-                                src={encodeURI(item.image)}
-                                alt={item.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-1">
-                                <h4 className="text-xs font-bold text-foreground group-hover:text-primary truncate">
-                                  {item.bengaliName?.includes("•") ? item.bengaliName.split("•")[1].trim() : item.name}
-                                </h4>
-                                <span className="text-[9.5px] px-1.5 py-0.2 rounded-md bg-accent-soft text-primary font-bold shrink-0">
-                                  {item.categoryName}
-                                </span>
+                        {liveSearchResults.map((item) => {
+                          const title = getSpecimenDisplayTitle(item);
+                          const sci = getSpecimenScientificName(item);
+                          return (
+                            <div
+                              key={item.id}
+                              onClick={() => {
+                                setSelectedSpecimen(item);
+                                setSearchFocused(false);
+                              }}
+                              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface transition-colors cursor-pointer group"
+                            >
+                              <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/80 shrink-0 bg-surface">
+                                <Image
+                                  src={encodeURI(item.image)}
+                                  alt={item.name}
+                                  fill
+                                  sizes="48px"
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                />
                               </div>
-                              <p className="text-[11px] text-muted-foreground truncate font-mono">
-                                {item.scientificName || item.name}
-                              </p>
-                              <p className="text-[10px] text-primary/80 truncate">
-                                {getSpecimenRegionalName(item)}
-                              </p>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-1">
+                                  <h4 className="text-xs font-bold text-foreground group-hover:text-primary truncate">
+                                    {title.fullTitle}
+                                  </h4>
+                                  <span className="text-[9.5px] px-1.5 py-0.2 rounded-md bg-accent-soft text-primary font-bold shrink-0">
+                                    {item.categoryName}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] italic font-serif text-muted-foreground truncate">
+                                  {sci}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
                       <div className="p-4 text-center text-xs text-muted-foreground">
-                        &quot;{searchQuery}&quot; দিয়ে কোনো প্রজাতি পাওয়া যায়নি।
+                        No specimens found matching &quot;{searchQuery}&quot;.
                       </div>
                     )}
                   </div>
@@ -261,7 +261,7 @@ export const Navbar = () => {
                 {/* Knowledge Hub Badge */}
                 <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-soft text-primary border border-accent/30 text-xs font-bold">
                   <BookOpen className="w-3.5 h-3.5 text-accent" />
-                  <span>উন্মুক্ত তথ্যভাণ্ডার</span>
+                  <span>Encyclopedia</span>
                 </div>
 
                 {/* User Account / Avatar Dropdown */}
@@ -328,7 +328,7 @@ export const Navbar = () => {
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
                           >
                             <User className="w-4 h-4 text-accent" />
-                            <span>আমার প্রোফাইল (My Profile)</span>
+                            <span>My Profile</span>
                           </Link>
 
                           <Link
@@ -337,7 +337,7 @@ export const Navbar = () => {
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
                           >
                             <Layers className="w-4 h-4 text-primary" />
-                            <span>সকল ক্যাটাগরি এক্সপ্লোর</span>
+                            <span>Explore All Categories</span>
                           </Link>
                         </div>
 
@@ -356,7 +356,7 @@ export const Navbar = () => {
                           ) : (
                             <LogOut className="w-4 h-4" />
                           )}
-                          <span>{isLoggingOut ? "লগ আউট হচ্ছে..." : "লগ আউট"}</span>
+                          <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
                         </button>
                       </div>
                     )}
@@ -367,7 +367,7 @@ export const Navbar = () => {
                     className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-2xs hover:shadow-xs transition-all duration-200"
                   >
                     <User className="w-3.5 h-3.5" />
-                    <span>লগইন / মেম্বার</span>
+                    <span>Sign In</span>
                   </Link>
                 )}
 
@@ -385,7 +385,7 @@ export const Navbar = () => {
               </div>
             </div>
 
-            {/* DESKTOP NAVIGATION LINKS (Visible only on 1024px+ screens) */}
+            {/* DESKTOP NAVIGATION LINKS (Visible only on 1024px+ screens, NO Bengali, NO Brackets) */}
             <nav className="hidden lg:flex items-center justify-between pt-3 mt-2 border-t border-border/60">
               <ul className="flex items-center gap-1 xl:gap-2">
                 <li>
@@ -394,11 +394,11 @@ export const Navbar = () => {
                     className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-primary bg-accent-soft hover:bg-accent hover:text-primary transition-colors duration-200 flex items-center gap-1.5"
                   >
                     <Home className="w-4 h-4 text-primary" />
-                    <span>Home (হোম)</span>
+                    <span>Home</span>
                   </Link>
                 </li>
 
-                {/* Fishes Dropdown - ONLY Titles */}
+                {/* Fishes Dropdown - ONLY Titles, NO Brackets */}
                 <li
                   className="relative"
                   onMouseEnter={() => setActiveDropdown("fish")}
@@ -406,7 +406,7 @@ export const Navbar = () => {
                 >
                   <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1 cursor-pointer">
                     <Fish className="w-4 h-4 text-primary" />
-                    <span>জলজ প্রাণী (Fishes)</span>
+                    <span>Fishes</span>
                     <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
 
@@ -428,7 +428,7 @@ export const Navbar = () => {
                   )}
                 </li>
 
-                {/* Plants Dropdown - ONLY Titles */}
+                {/* Plants Dropdown - ONLY Titles, NO Brackets */}
                 <li
                   className="relative"
                   onMouseEnter={() => setActiveDropdown("plants")}
@@ -436,7 +436,7 @@ export const Navbar = () => {
                 >
                   <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1 cursor-pointer">
                     <Leaf className="w-4 h-4 text-accent" />
-                    <span>উদ্ভিদ জগত (Plants)</span>
+                    <span>Plants</span>
                     <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                   </button>
 
@@ -464,7 +464,7 @@ export const Navbar = () => {
                     className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
                   >
                     <Layers className="w-4 h-4 text-muted-foreground" />
-                    <span>সকল ক্যাটাগরি (All Categories)</span>
+                    <span>All Categories</span>
                   </Link>
                 </li>
 
@@ -474,7 +474,7 @@ export const Navbar = () => {
                     className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
                   >
                     <Info className="w-4 h-4 text-muted-foreground" />
-                    <span>About Us (আমাদের সম্পর্কে)</span>
+                    <span>About Us</span>
                   </Link>
                 </li>
 
@@ -484,14 +484,14 @@ export const Navbar = () => {
                     className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
                   >
                     <PhoneCall className="w-4 h-4 text-muted-foreground" />
-                    <span>Contact (যোগাযোগ)</span>
+                    <span>Contact</span>
                   </Link>
                 </li>
               </ul>
 
               <div className="hidden xl:flex items-center gap-2 text-xs text-muted-foreground">
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
-                <span>উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত বিশ্বকোষ</span>
+                <span>Botanical &amp; Aquatic Encyclopedia</span>
               </div>
             </nav>
           </div>
@@ -539,7 +539,7 @@ export const Navbar = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="মাছ বা উদ্ভিদের নাম দিয়ে খুঁজুন..."
+                  placeholder="Search species by name..."
                   className="w-full bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
                 {searchQuery && (
@@ -548,7 +548,7 @@ export const Navbar = () => {
                     onClick={() => setSearchQuery("")}
                     className="text-xs text-muted-foreground hover:text-foreground px-1"
                   >
-                    ক্লিয়ার
+                    Clear
                   </button>
                 )}
               </div>
@@ -557,40 +557,44 @@ export const Navbar = () => {
               {searchQuery.trim() && (
                 <div className="mt-2 bg-white rounded-xl border border-border shadow-lg p-2 space-y-1">
                   <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase flex items-center justify-between">
-                    <span>ফলাফল ({liveSearchResults.length})</span>
-                    <span className="text-accent">ক্লিক করে দেখুন</span>
+                    <span>Results ({liveSearchResults.length})</span>
+                    <span className="text-accent">Click to view</span>
                   </div>
                   {liveSearchResults.length > 0 ? (
-                    liveSearchResults.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => {
-                          setSelectedSpecimen(item);
-                          setMobileMenuOpen(false);
-                        }}
-                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer"
-                      >
-                        <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-border bg-surface">
-                          <Image
-                            src={encodeURI(item.image)}
-                            alt={item.name}
-                            fill
-                            sizes="40px"
-                            className="object-cover"
-                          />
+                    liveSearchResults.map((item) => {
+                      const title = getSpecimenDisplayTitle(item);
+                      const sci = getSpecimenScientificName(item);
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedSpecimen(item);
+                            setMobileMenuOpen(false);
+                          }}
+                          className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-surface transition-colors cursor-pointer"
+                        >
+                          <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-border bg-surface">
+                            <Image
+                              src={encodeURI(item.image)}
+                              alt={item.name}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-foreground truncate">
+                              {title.fullTitle}
+                            </p>
+                            <p className="text-[10px] italic font-serif text-muted-foreground truncate">
+                              {sci}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-foreground truncate">
-                            {item.bengaliName?.includes("•") ? item.bengaliName.split("•")[1].trim() : item.name}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground truncate">
-                            {item.scientificName || item.categoryName}
-                          </p>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
-                    <p className="text-xs text-muted-foreground p-2">কোনো প্রজাতি পাওয়া যায়নি।</p>
+                    <p className="text-xs text-muted-foreground p-2">No species found.</p>
                   )}
                 </div>
               )}
@@ -640,7 +644,7 @@ export const Navbar = () => {
                     ) : (
                       <LogOut className="w-3.5 h-3.5" />
                     )}
-                    <span>{isLoggingOut ? "প্রস্থান..." : "লগ আউট"}</span>
+                    <span>{isLoggingOut ? "Exiting..." : "Sign Out"}</span>
                   </button>
                 </div>
               </div>
@@ -651,8 +655,8 @@ export const Navbar = () => {
                     <User className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-primary">প্রকৃতিপ্রেমী মেম্বার হাব</p>
-                    <p className="text-[11px] text-muted-foreground">বুকমার্ক ও তথ্যের সুবিধায় সাইন ইন করুন</p>
+                    <p className="text-xs font-bold text-primary">Member Community</p>
+                    <p className="text-[11px] text-muted-foreground">Sign in for personalized bookmarks</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -662,22 +666,20 @@ export const Navbar = () => {
                     className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors text-center"
                   >
                     <User className="w-3.5 h-3.5" />
-                    <span>লগইন করুন</span>
+                    <span>Sign In</span>
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white border border-primary/30 hover:border-accent text-primary text-xs font-bold shadow-sm transition-colors text-center"
                   >
-                    <span>অ্যাকাউন্ট খুলুন</span>
+                    <span>Register</span>
                   </Link>
                 </div>
               </div>
             )}
 
-            {/* ============================================================== */}
-            {/* NAVIGATION LINKS LIST - ONLY TITLES, NO SHORT PARAGRAPHS */}
-            {/* ============================================================== */}
+            {/* NAVIGATION LINKS LIST - ONLY TITLES, NO SHORT PARAGRAPHS, NO BRACKETS */}
             <div className="space-y-1.5 pt-1">
               {/* 1. Home Link */}
               <Link
@@ -687,7 +689,7 @@ export const Navbar = () => {
               >
                 <div className="flex items-center gap-2.5">
                   <Home className="w-4 h-4 text-primary" />
-                  <span>Home (হোম)</span>
+                  <span>Home</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </Link>
@@ -701,7 +703,7 @@ export const Navbar = () => {
                 >
                   <div className="flex items-center gap-2.5">
                     <Fish className="w-4 h-4 text-primary" />
-                    <span>জলজ প্রাণী (Fishes)</span>
+                    <span>Fishes</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <ChevronDown
@@ -738,7 +740,7 @@ export const Navbar = () => {
                 >
                   <div className="flex items-center gap-2.5">
                     <Leaf className="w-4 h-4 text-accent" />
-                    <span>উদ্ভিদ জগত (Plants)</span>
+                    <span>Plants</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <ChevronDown
@@ -774,7 +776,7 @@ export const Navbar = () => {
               >
                 <div className="flex items-center gap-2.5">
                   <Layers className="w-4 h-4 text-muted-foreground" />
-                  <span>সকল ক্যাটাগরি (All Categories)</span>
+                  <span>All Categories</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </Link>
@@ -787,7 +789,7 @@ export const Navbar = () => {
               >
                 <div className="flex items-center gap-2.5">
                   <Info className="w-4 h-4 text-muted-foreground" />
-                  <span>আমাদের সম্পর্কে (About Us)</span>
+                  <span>About Us</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </Link>
@@ -800,7 +802,7 @@ export const Navbar = () => {
               >
                 <div className="flex items-center gap-2.5">
                   <PhoneCall className="w-4 h-4 text-muted-foreground" />
-                  <span>যোগাযোগ ও পরামর্শ (Contact)</span>
+                  <span>Contact</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </Link>
@@ -811,7 +813,7 @@ export const Navbar = () => {
           <div className="p-3 border-t border-border bg-surface text-center">
             <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <ShieldCheck className="w-4 h-4 text-accent" />
-              <span className="font-medium">উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত বিশ্বকোষ</span>
+              <span className="font-medium">Botanical &amp; Aquatic Encyclopedia</span>
             </div>
           </div>
         </aside>

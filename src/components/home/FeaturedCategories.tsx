@@ -6,36 +6,35 @@ import Link from "next/link";
 import { Fish, Leaf, Layers, Sparkles } from "lucide-react";
 import { CATEGORIES_META } from "@/data/categories";
 
-// Item summaries tailored for each category to describe the specimens included
+// English summaries tailored for each category
 const categorySummaryMap: Record<string, { itemsList: string; highlight: string }> = {
   indoor: {
-    itemsList: "মনস্টেরা, পিস লিলি, মানিপ্ল্যান্ট, অ্যাগলোনিমা, ক্যালাথিয়া, জেড প্ল্যান্ট, ডাম্ব ক্যান, কোলিয়াস ও লাকি ব্যাম্বুসহ বাতাস বিশুদ্ধকারী প্রিমিয়াম ইনডোর কালেকশন।",
+    itemsList: "Monstera, Peace Lily, Money Plant, Aglaonema, Calathea, Jade Plant, Dumb Cane, and air-purifying indoor foliage.",
     highlight: "Air Purifying Foliage",
   },
   bonsai: {
-    itemsList: "ক্ষুদ্রাকৃতির চাইনিজ বট, ফাইকাস, জেড বনসাই, ফ্লাওয়ারিং গাছ, ড্রয়ার্ফ স্পেসিমেন ও গ্লেজড সিরামিক পটসহ জীবন্ত ভাস্কর্য বনসাই আর্ট।",
+    itemsList: "Miniature Chinese Banyan, Ficus Microcarpa, Weeping Fig, Jade Bonsai, flowering varieties, and glazed ceramic art specimens.",
     highlight: "Living Bonsai Art",
   },
   flowers: {
-    itemsList: "রেয়ার ট্রপিক্যাল ওয়াটার লিলি (শালুক), রেইন লিলি, পদ্মফুল, সুবাসিত গোলাপ ও বিভিন্ন মৌসুমি ফোটা বাহারি ফুলের বিশাল সমাহার।",
+    itemsList: "Tropical Water Lilies, Rain Lilies, Sacred Lotus, fragrant Arabian Jasmines, and multi-season vibrant garden blossoms.",
     highlight: "Water Lilies & Blooms",
   },
   guppy: {
-    itemsList: "২৪কে ফুল গোল্ড, অ্যালবিনো ব্লু টোপাজ, মস্কো ব্লু, ডাম্বো ইয়ার রেড টেইল ও শো-গ্রেড হাই-ডরসেল ডেল্টা স্ট্রেইন পিওরলাইন গাপ্পি।",
+    itemsList: "24K Full Gold, Albino Blue Topaz, Moscow Blue, Dumbo Ear Red Tail, and show-grade delta strain pureline livebearers.",
     highlight: "Pureline Delta Strains",
   },
   fighter: {
-    itemsList: "এলিয়েন কপার বেটা, হাফমুন, বিগ ডাম্বো ইয়ার, রেড ড্রাগন, ব্লু রিম ও শো-গ্রেড ভাইব্রেন্ট গ্যালাক্সি কোই ফাইটার ফিশ স্পেসিমেন।",
+    itemsList: "Alien Copper Bettas, Halfmoons, Dumbo Big Ears, Red Dragons, Blue Rims, and vibrant Galaxy Koi specimen bettas.",
     highlight: "Halfmoons & Galaxy Bettas",
   },
   marine: {
-    itemsList: "নেমো ক্লাউনফিশ, ব্লু ট্যাং ও কোরাল রিফ অ্যাকোয়ারিয়ামের উপযোগী কোয়ারেন্টাইন করা স্বাস্থ্যকর রঙিন সামুদ্রিক লবণাক্ত পানির মাছ।",
+    itemsList: "Percula Clownfish, Blue Tang, Yellow Tang, and quarantine-acclimated saltwater reef aquarium dwellers.",
     highlight: "Reef-Safe Seawater Fish",
   },
 };
 
 export default function FeaturedCategories() {
-  // Category Icon Resolver
   const getCategoryIcon = (id: string) => {
     switch (id) {
       case "indoor":
@@ -65,12 +64,12 @@ export default function FeaturedCategories() {
               Curated Botanical &amp; Aquatic Categories
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
-              প্রতিটি ক্যাটাগরি কার্ডে ক্লিক করে ভেতরে থাকা সমস্ত আকর্ষণীয় স্পেসিমেন ও পরিচর্যার বিস্তারিত তথ্য দেখুন।
+              Click any category card to explore all documented species, lighting protocols, and comprehensive care guides.
             </p>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-primary/80 bg-white px-3.5 py-1.5 rounded-full border border-border shadow-xs">
-            <span>৬টি বিশেষায়িত ক্যাটাগরি</span>
+            <span>6 Specialized Departments</span>
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
           </div>
         </div>
@@ -118,23 +117,16 @@ export default function FeaturedCategories() {
                 <div className="absolute top-4 right-4 z-10">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-black/60 backdrop-blur-md text-accent border border-white/20 shadow-sm group-hover:border-accent group-hover:bg-black/80 transition-all">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                    <span>{cat.itemCount} টি কার্ড আছে</span>
+                    <span>{cat.itemCount} Species</span>
                   </span>
                 </div>
 
                 {/* Bottom Content Area: Title & Summary Paragraph */}
                 <div className="relative z-10 p-5 sm:p-6 space-y-2">
-                  {/* Title */}
-                  <div>
-                    <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-snug group-hover:text-accent transition-colors duration-200">
-                      {cat.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm font-semibold text-accent/90 mt-0.5">
-                      {cat.bengaliName}
-                    </p>
-                  </div>
+                  <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-snug group-hover:text-accent transition-colors duration-200">
+                    {cat.name}
+                  </h3>
 
-                  {/* Paragraph with items summary */}
                   <p className="text-xs sm:text-[13px] text-white/85 line-clamp-3 leading-relaxed">
                     {summary.itemsList}
                   </p>

@@ -6,8 +6,6 @@ import Image from "next/image";
 import {
   MapPin,
   Mail,
-  ShieldCheck,
-  HeartHandshake,
   BookOpen,
   Leaf,
   Fish,
@@ -19,7 +17,7 @@ import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa6";
 export const Footer = () => {
   return (
     <footer className="bg-primary text-white pt-14 pb-8 border-t border-primary-dark">
-      {/* 1. Value Proposition Highlights (Educational & Scientific Pillars) */}
+      {/* 1. Value Proposition Highlights (Educational & Scientific Pillars in English) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 border-b border-white/10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -28,10 +26,10 @@ export const Footer = () => {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs sm:text-sm text-white">
-                প্রামাণ্য উদ্ভিদ পরিচিতি
+                Authentic Taxonomy
               </h4>
               <p className="text-[11px] text-white/70">
-                বৈজ্ঞানিক ও আঞ্চলিক নাম সংকলন
+                Verified binomial scientific names
               </p>
             </div>
           </div>
@@ -42,10 +40,10 @@ export const Footer = () => {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs sm:text-sm text-white">
-                জলজ জীববৈচিত্র্য
+                Aquatic Biodiversity
               </h4>
               <p className="text-[11px] text-white/70">
-                বেটা, গাপ্পি ও সামুদ্রিক মাছের গাইড
+                Betta, guppy &amp; saltwater marine guides
               </p>
             </div>
           </div>
@@ -56,10 +54,10 @@ export const Footer = () => {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs sm:text-sm text-white">
-                সূর্যালোক ও পরিচর্যা
+                Lighting &amp; Climate
               </h4>
               <p className="text-[11px] text-white/70">
-                পানি, সার, মাটি ও তাপমাত্রা নির্দেশিকা
+                Water, soil, nutrient &amp; temp protocols
               </p>
             </div>
           </div>
@@ -70,10 +68,10 @@ export const Footer = () => {
             </div>
             <div>
               <h4 className="font-heading font-bold text-xs sm:text-sm text-white">
-                উন্মুক্ত বিশ্বকোষ
+                Open Encyclopedia
               </h4>
               <p className="text-[11px] text-white/70">
-                বিনামূল্যে প্রকৃতির জ্ঞান সবার জন্য
+                Free botanical &amp; aquatic knowledge
               </p>
             </div>
           </div>
@@ -106,13 +104,13 @@ export const Footer = () => {
             </Link>
 
             <p className="text-xs sm:text-sm text-white/75 leading-relaxed max-w-sm">
-              বাংলাদেশের প্রকৃতিপ্রেমী, ছাদবাগান উৎসাহী এবং অ্যাকুয়ারিয়াম শৌখিনদের জন্য উদ্ভিদ ও জলজ প্রাণীর সঠিক বৈজ্ঞানিক তথ্য, আবহাওয়া, সূর্যালোক ও পরিচর্যার উন্মুক্ত তথ্যকোষ।
+              An open digital repository dedicated to plant lovers, urban rooftop gardeners, and passionate aquarists seeking verified scientific taxonomy, climate adaptation, and comprehensive care guidance.
             </p>
 
             <div className="space-y-2 pt-2 text-xs text-white/80">
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-accent shrink-0" />
-                <span>ঢাকা, বাংলাদেশ (Dhaka, Bangladesh)</span>
+                <span>Dhaka, Bangladesh</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-accent shrink-0" />
@@ -121,40 +119,40 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Categories */}
+          {/* Species Departments */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-xs tracking-wider uppercase text-accent">
-              উদ্ভিদ ও মাছের বিভাগ
+              Flora &amp; Fauna Departments
             </h4>
             <ul className="space-y-2 text-xs text-white/75">
               <li>
                 <Link href="/category/indoor" className="hover:text-accent transition-colors duration-200">
-                  ইনডোর প্ল্যান্টস (Indoor Plants)
+                  Indoor Plants
                 </Link>
               </li>
               <li>
                 <Link href="/category/bonsai" className="hover:text-accent transition-colors duration-200">
-                  জীবন্ত বনসাই বৃক্ষ (Bonsai Art)
+                  Living Bonsai Art
                 </Link>
               </li>
               <li>
                 <Link href="/category/flowers" className="hover:text-accent transition-colors duration-200">
-                  ফুল ও জলপদ্ম (Flower Plants)
+                  Flower Plants &amp; Lilies
                 </Link>
               </li>
               <li>
                 <Link href="/category/fighter" className="hover:text-accent transition-colors duration-200">
-                  সিয়ামিজ বেটা মাছ (Betta / Fighter)
+                  Fighter / Betta Fish
                 </Link>
               </li>
               <li>
                 <Link href="/category/guppy" className="hover:text-accent transition-colors duration-200">
-                  পিয়োরলাইন গাপ্পি (Pureline Guppies)
+                  Pureline Guppies
                 </Link>
               </li>
               <li>
                 <Link href="/category/marine" className="hover:text-accent transition-colors duration-200">
-                  সামুদ্রিক মাছ (SeaWater Fishes)
+                  SeaWater Fish
                 </Link>
               </li>
             </ul>
@@ -163,32 +161,32 @@ export const Footer = () => {
           {/* Educational Resources & Support */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-xs tracking-wider uppercase text-accent">
-              জ্ঞান ও পরামর্শ
+              Knowledge &amp; Guides
             </h4>
             <ul className="space-y-2 text-xs text-white/75">
               <li>
                 <Link href="/about" className="hover:text-accent transition-colors duration-200">
-                  আমাদের উদ্দেশ্য ও গল্প
+                  Our Mission &amp; Purpose
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-accent transition-colors duration-200">
-                  যোগাযোগ ও তথ্য সংশোধন
+                  Contact &amp; Feedback
                 </Link>
               </li>
               <li>
                 <Link href="/" className="hover:text-accent transition-colors duration-200">
-                  সম্পূর্ণ উন্মুক্ত ক্যাটালগ
+                  Complete Species Catalog
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-accent transition-colors duration-200">
-                  ইনডোর প্ল্যান্ট পরিচর্যা নির্দেশিকা
+                  Indoor Plant Care Guidelines
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-accent transition-colors duration-200">
-                  অ্যাকুয়ারিয়াম পানি ও তাপমাত্রা গাইড
+                  Aquarium Water Chemistry
                 </Link>
               </li>
             </ul>
@@ -197,10 +195,10 @@ export const Footer = () => {
           {/* Community & Newsletter */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-xs tracking-wider uppercase text-accent">
-              প্রকৃতিপ্রেমী সম্প্রদায়
+              Nature Community
             </h4>
             <p className="text-xs text-white/70 leading-relaxed">
-              নতুন প্রজাতি সংযোজন ও মৌসুমি পরিচর্যা পরামর্শের নোটিফিকেশন পেতে সাবস্ক্রাইব করুন।
+              Subscribe for newly documented species alerts and seasonal plant care tips.
             </p>
 
             <form
@@ -210,7 +208,7 @@ export const Footer = () => {
               <div className="flex flex-col gap-2">
                 <input
                   type="email"
-                  placeholder="আপনার ইমেইল অ্যাড্রেস..."
+                  placeholder="Enter your email address..."
                   className="w-full bg-white/10 border border-white/20 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-white/50 focus:outline-none focus:border-accent focus:bg-white/15 transition-all duration-200"
                   required
                 />
@@ -218,7 +216,7 @@ export const Footer = () => {
                   type="submit"
                   className="w-full py-2 rounded-full bg-accent hover:bg-accent/90 text-primary font-bold text-xs shadow-md transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <span>যুক্ত হোন</span>
+                  <span>Subscribe</span>
                   <Send className="w-3 h-3" />
                 </button>
               </div>
@@ -254,11 +252,11 @@ export const Footer = () => {
       {/* 3. Bottom Legal & Knowledge Hub Statement */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-white/10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/60 text-center sm:text-left">
-          <p>© {new Date().getFullYear()} Asmual AquaNature. উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত বিশ্বকোষ।</p>
+          <p>© {new Date().getFullYear()} Asmual AquaNature. Living Botanical &amp; Aquatic Encyclopedia.</p>
           <div className="flex items-center gap-2 text-[11px] text-accent font-medium">
-            <span>উন্মুক্ত বটানিক্যাল ও অ্যাকুয়াটিক জ্ঞানভাণ্ডার</span>
+            <span>Open Knowledge Repository</span>
             <span>•</span>
-            <span>ঢাকা, বাংলাদেশ</span>
+            <span>Dhaka, Bangladesh</span>
           </div>
         </div>
       </div>

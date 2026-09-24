@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { 
   TCategoryItem, 
-  getSpecimenRegionalName, 
+  getSpecimenDisplayTitle,
+  getSpecimenScientificName,
   getSpecimenBloomingSeason, 
   getSpecimenSunlight 
 } from "@/data/categories";
@@ -55,14 +56,10 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
   };
 
   const currentSafeImage = encodeURI(images[currentIndex]);
-  const regionalName = getSpecimenRegionalName(item);
+  const titleInfo = getSpecimenDisplayTitle(item);
+  const scientificName = getSpecimenScientificName(item);
   const bloomingSeason = getSpecimenBloomingSeason(item);
   const sunlightCondition = getSpecimenSunlight(item);
-
-  // Clean bengali name if it has category prefix
-  const cleanBengaliName = item.bengaliName?.includes("•") 
-    ? item.bengaliName.split("•")[1].trim() 
-    : item.bengaliName || item.name;
 
   return (
     <div
@@ -96,7 +93,7 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
                 ? "bg-amber-600/90 text-white"
                 : "bg-primary/90 text-white"
             }`}>
-              {item.careLevel === "Easy" ? "সহজ যত্ন" : item.careLevel === "Moderate" ? "মাঝারি যত্ন" : "বিশেষ যত্ন"}
+              {item.careLevel} Care
             </span>
 
             {/* Multi-Photo Count Badge */}
@@ -114,7 +111,7 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
               e.stopPropagation();
               setIsBookmarked(!isBookmarked);
             }}
-            title={isBookmarked ? "সংরক্ষিত জ্ঞান বুকমার্ক" : "বুকমার্কে রাখুন"}
+            title={isBookmarked ? "Remove Bookmark" : "Save Bookmark"}
             className="p-1.5 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-colors shadow-xs cursor-pointer"
           >
             <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? "fill-accent text-accent" : "text-white"}`} />
@@ -159,37 +156,20 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
 
       {/* Card Body Details */}
       <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
-        <div className="space-y-1">
-          {/* Bengali Name Prominent */}
+        <div className="space-y-0.5">
+          {/* Title: English Name (বাংলা নাম) */}
           <h3 className="font-heading font-extrabold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1 leading-snug">
-            {cleanBengaliName}
+            {titleInfo.fullTitle}
           </h3>
 
-          {/* English Name & Scientific Name */}
-          <div className="space-y-0.5">
-            <p className="text-[11px] font-semibold text-primary/90 truncate">
-              {item.name}
-            </p>
-            {item.scientificName && (
-              <p className="text-[10px] italic text-muted-foreground truncate font-mono">
-                {item.scientificName}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Regional BD Name Badge */}
-        <div className="bg-surface rounded-lg p-1.5 border border-border/70 text-[10.5px] leading-tight">
-          <span className="text-[9px] font-bold text-accent uppercase tracking-wider block">
-            বাংলাদেশে আঞ্চলিক নাম:
-          </span>
-          <p className="text-foreground/80 font-medium truncate mt-0.5">
-            {regionalName}
+          {/* Scientific Name in Subtle Italic Font */}
+          <p className="text-[11.5px] italic font-serif text-muted-foreground/80 tracking-normal truncate">
+            {scientificName}
           </p>
         </div>
 
-        {/* Sunlight & Blooming Season Quick Specs */}
-        <div className="space-y-1 text-[10.5px]">
+        {/* Sunlight & Blooming Season Quick Specs in Clean English */}
+        <div className="space-y-1.5 pt-1 text-[11px] border-t border-border/50">
           <div className="flex items-center gap-1.5 text-foreground/75 truncate">
             {item.type === "plant" ? (
               <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
@@ -197,24 +177,24 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
               <Droplets className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
             )}
             <span className="truncate text-muted-foreground">
-              <strong className="text-foreground/90 font-semibold">{item.type === "plant" ? "রোদ:" : "পানি:"}</strong> {sunlightCondition}
+              <strong className="text-foreground/90 font-semibold">{item.type === "plant" ? "Sunlight:" : "Water:"}</strong> {sunlightCondition}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5 text-foreground/75 truncate">
             <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span className="truncate text-muted-foreground">
-              <strong className="text-foreground/90 font-semibold">{item.type === "plant" ? "মৌসুম:" : "প্রজনন:"}</strong> {bloomingSeason}
+              <strong className="text-foreground/90 font-semibold">{item.type === "plant" ? "Blooming:" : "Breeding:"}</strong> {bloomingSeason}
             </span>
           </div>
         </div>
 
-        {/* Action Button Footer */}
+        {/* Action Button Footer in English */}
         <div className="pt-2 border-t border-border/60">
           <div className="w-full flex items-center justify-between text-xs font-bold text-primary group-hover:text-accent transition-colors">
             <span className="flex items-center gap-1 text-[11px]">
               <BookOpen className="w-3.5 h-3.5 text-accent" />
-              <span>পরিচর্যা নির্দেশিকা</span>
+              <span>Read Care Guide</span>
             </span>
             <div className="w-6 h-6 rounded-full bg-surface group-hover:bg-accent group-hover:text-primary flex items-center justify-center transition-all">
               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />

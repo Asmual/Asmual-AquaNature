@@ -5432,97 +5432,151 @@ export function getItemById(id: string): TCategoryItem | undefined {
 }
 
 /**
- * Returns authentic regional / colloquial name in Bangladesh (বাংলাদেশে প্রচলিত আঞ্চলিক নাম)
+ * Returns formatted title strictly as: English Name (বাংলা নাম)
+ * e.g., "Money Plant (মানিপ্ল্যান্ট)", "China Tagar (চায়না টগর)", "Monstera (মনস্টেরা)"
  */
-export function getSpecimenRegionalName(item: TCategoryItem): string {
-  if (item.regionalName && item.regionalName.trim()) {
-    return item.regionalName;
+export function getSpecimenDisplayTitle(item: TCategoryItem): {
+  englishName: string;
+  bengaliName: string;
+  fullTitle: string;
+} {
+  let eng = item.name.trim();
+  let bng = "";
+
+  // Check if name has English (Bengali)
+  const parenMatch = eng.match(/^(.*?)\s*\(([\u0980-\u09FF\s\/\.,\-\&]+)\)$/);
+  if (parenMatch) {
+    eng = parenMatch[1].trim();
+    bng = parenMatch[2].trim();
+  } else if (item.bengaliName) {
+    // If bengaliName has category prefix like "ইনডোর প্ল্যান্টস • Monstera (মনস্টেরা)"
+    const bPart = item.bengaliName.includes("•") ? item.bengaliName.split("•")[1].trim() : item.bengaliName.trim();
+    const bMatch = bPart.match(/\(([\u0980-\u09FF\s\/\.,\-\&]+)\)/);
+    if (bMatch) {
+      bng = bMatch[1].trim();
+    } else {
+      // Check if bPart has pure bengali
+      const pureBng = bPart.match(/[\u0980-\u09FF\s\/\.,\-\&]+/);
+      if (pureBng) bng = pureBng[0].trim();
+    }
   }
 
-  const nameLower = item.name.toLowerCase();
-  const descLower = item.description.toLowerCase();
-
-  // Plant regional names in BD
-  if (item.type === "plant") {
-    if (nameLower.includes("water lily") || nameLower.includes("lily") || descLower.includes("water lily")) {
-      return "শালুক / নীল পদ্ম / লাল শাপলা (জলজ ফুল)";
-    }
-    if (nameLower.includes("monstera") || descLower.includes("monstera")) {
-      return "কাটা পাতা গাছ / সুইস চিজ প্ল্যান্ট";
-    }
-    if (nameLower.includes("aglaonema") || descLower.includes("aglaonema")) {
-      return "চীনা চিরসবুজ / রঙিন পাতা বাহার";
-    }
-    if (nameLower.includes("sansevieria") || nameLower.includes("snake") || descLower.includes("snake plant")) {
-      return "সাপের ফণা গাছ / স্নেক প্ল্যান্ট (বায়ু পরিশোধক)";
-    }
-    if (nameLower.includes("money plant") || nameLower.includes("pothos") || descLower.includes("money plant")) {
-      return "মানিপ্ল্যান্ট / গোল্ডেন পোথোস লতা";
-    }
-    if (nameLower.includes("bonsai") || nameLower.includes("ficus") || descLower.includes("ficus")) {
-      return "বট / পাকুড় / ডুমুর বনসাই বৃক্ষ";
-    }
-    if (nameLower.includes("rose") || descLower.includes("rose")) {
-      return "দেশি ও বিদেশি হাইব্রিড গোলাপ";
-    }
-    if (nameLower.includes("jasmine") || nameLower.includes("beli") || descLower.includes("jasmine")) {
-      return "বেলি ফুল / সুবাসিত জুঁই";
-    }
-    if (nameLower.includes("hibiscus") || nameLower.includes("jaba") || descLower.includes("hibiscus")) {
-      return "রক্তজবা / পঞ্চমুখী ঝুমকো জবা";
-    }
-    if (nameLower.includes("bougainvillea") || descLower.includes("bougainvillea")) {
-      return "বাগানবিলাস / রঙিন কাগজ ফুল";
-    }
-    if (nameLower.includes("jade") || descLower.includes("jade")) {
-      return "লাকি জেদ ট্রি / ক্র্যাসুলা";
-    }
-    if (nameLower.includes("aloe") || descLower.includes("aloe")) {
-      return "ঘৃতকুমারী / অ্যালোভেরা ভেষজ";
-    }
-    if (nameLower.includes("palm") || descLower.includes("areca")) {
-      return "সুপারি পাম / এরিকা পাম গাছ";
-    }
-    if (nameLower.includes("fern") || descLower.includes("fern")) {
-      return "ঢেঁকিশাক জাতীয় শোভাময় ফার্ন";
-    }
-    if (item.categoryId === "bonsai") {
-      return "ক্ষুদ্রাকৃতি শিল্পিত জীবন্ত বনসাই";
-    }
-    if (item.categoryId === "flowers") {
-      return "বাংলা ও গ্রীষ্মমণ্ডলীয় শোভাময় ফুল";
-    }
-    return "ইনডোর ও বারান্দার শোভাময় পাতা বাহার";
+  // Fallbacks if Bengali name is still empty
+  if (!bng) {
+    const nameLower = eng.toLowerCase();
+    if (nameLower.includes("water lily") || nameLower.includes("lotus")) bng = "শালুক / পদ্ম";
+    else if (nameLower.includes("monstera")) bng = "মনস্টেরা";
+    else if (nameLower.includes("aglaonema")) bng = "অ্যাগলোনেমা";
+    else if (nameLower.includes("aloe")) bng = "অ্যালোভেরা";
+    else if (nameLower.includes("snake") || nameLower.includes("sansevieria")) bng = "স্নেক প্ল্যান্ট";
+    else if (nameLower.includes("money plant") || nameLower.includes("pothos")) bng = "মানিপ্ল্যান্ট";
+    else if (nameLower.includes("tagar") || nameLower.includes("crape")) bng = "চায়না টগর";
+    else if (nameLower.includes("rose")) bng = "গোলাপ";
+    else if (nameLower.includes("jasmine") || nameLower.includes("beli")) bng = "বেলি ফুল";
+    else if (nameLower.includes("hibiscus") || nameLower.includes("jaba")) bng = "জবা ফুল";
+    else if (nameLower.includes("bougainvillea")) bng = "বাগানবিলাস";
+    else if (nameLower.includes("bonsai") || nameLower.includes("ficus")) bng = "বট বনসাই";
+    else if (nameLower.includes("jade")) bng = "জেদ ট্রি";
+    else if (nameLower.includes("betta") || nameLower.includes("fighter")) bng = "ফাইটার ফিশ";
+    else if (nameLower.includes("guppy")) bng = "গাপ্পি মাছ";
+    else if (nameLower.includes("clownfish") || nameLower.includes("nemo")) bng = "নিমো মাছ";
+    else if (nameLower.includes("tang")) bng = "ইয়েলো ট্যাং";
+    else if (item.type === "plant") bng = "শোভাময় গাছ";
+    else bng = "রঙিন মাছ";
   }
 
-  // Fish regional / trade names in BD
-  if (item.type === "fish") {
-    if (nameLower.includes("fighter") || nameLower.includes("betta") || descLower.includes("betta")) {
-      return "সিয়ামিজ ফাইটার ফিশ / লড়াকু মাছ";
-    }
-    if (nameLower.includes("guppy") || descLower.includes("guppy")) {
-      return "রংধনু মাছ / পিওরলাইন গাপ্পি";
-    }
-    if (nameLower.includes("clownfish") || nameLower.includes("nemo") || descLower.includes("clownfish")) {
-      return "অ্যানিমোন ফিশ / ক্লাউনফিশ (নিমো মাছ)";
-    }
-    if (nameLower.includes("tang") || descLower.includes("tang")) {
-      return "সার্জন ফিশ / সামুদ্রিক ইয়েলো ট্যাং";
-    }
-    if (item.categoryId === "marine") {
-      return "সামুদ্রিক লবণাক্ত পানির প্রবাল মাছ";
-    }
-    return "অ্যাকুয়ারিয়ামের শোভাময় রঙিন মাছ";
-  }
+  // Ensure clean english title without bracket
+  eng = eng.replace(/\s*\([^)]*\)$/, "").trim();
 
-  return "বাংলাদেশে সংগৃহীত প্রাকৃতিক প্রজাতি";
+  return {
+    englishName: eng,
+    bengaliName: bng,
+    fullTitle: `${eng} (${bng})`,
+  };
 }
 
 /**
- * Returns blooming season for plants or breeding cycle for fishes (ফুল ফোটার সময় / প্রজননকাল)
+ * Returns clean scientific name in authentic binomial nomenclature
+ */
+export function getSpecimenScientificName(item: TCategoryItem): string {
+  if (item.scientificName && item.scientificName.trim() && !item.scientificName.endsWith("Specimen")) {
+    return item.scientificName.trim();
+  }
+
+  const nameLower = item.name.toLowerCase();
+
+  // Plant taxonomy
+  if (nameLower.includes("monstera")) return "Monstera deliciosa";
+  if (nameLower.includes("aglaonema")) return "Aglaonema commutatum";
+  if (nameLower.includes("aloe")) return "Aloe barbadensis miller";
+  if (nameLower.includes("snake") || nameLower.includes("sansevieria")) return "Dracaena trifasciata";
+  if (nameLower.includes("pothos") || nameLower.includes("money plant")) return "Epipremnum aureum";
+  if (nameLower.includes("water lily")) return "Nymphaea nouchali";
+  if (nameLower.includes("lotus")) return "Nelumbo nucifera";
+  if (nameLower.includes("rose")) return "Rosa gallica";
+  if (nameLower.includes("jasmine") || nameLower.includes("beli")) return "Jasminum sambac";
+  if (nameLower.includes("tagar") || nameLower.includes("tabernaemontana")) return "Tabernaemontana divaricata";
+  if (nameLower.includes("hibiscus") || nameLower.includes("jaba")) return "Hibiscus rosa-sinensis";
+  if (nameLower.includes("bougainvillea")) return "Bougainvillea spectabilis";
+  if (nameLower.includes("ficus") || nameLower.includes("bonsai")) return "Ficus microcarpa";
+  if (nameLower.includes("jade")) return "Crassula ovata";
+  if (nameLower.includes("palm") || nameLower.includes("areca")) return "Dypsis lutescens";
+
+  // Fish taxonomy
+  if (nameLower.includes("betta") || nameLower.includes("fighter")) return "Betta splendens";
+  if (nameLower.includes("guppy")) return "Poecilia reticulata";
+  if (nameLower.includes("clownfish") || nameLower.includes("nemo")) return "Amphiprion ocellaris";
+  if (nameLower.includes("yellow tang")) return "Zebrasoma flavescens";
+  if (nameLower.includes("blue tang")) return "Paracanthurus hepatus";
+
+  // Clean existing scientificName if present
+  if (item.scientificName) {
+    return item.scientificName.replace(/\s+Specimen$/i, "").trim();
+  }
+
+  return item.type === "plant" ? "Botanical Flora Specimen" : "Aquatic Fauna Specimen";
+}
+
+/**
+ * Returns sunlight and atmosphere needs in English
+ */
+export function getSpecimenSunlight(item: TCategoryItem): string {
+  if (item.sunlightOrShade && item.sunlightOrShade.trim() && !/[\u0980-\u09FF]/.test(item.sunlightOrShade)) {
+    return item.sunlightOrShade;
+  }
+
+  if (item.type === "plant") {
+    if (item.categoryId === "flowers") {
+      return "Direct Full Sun (5-6 hours daily)";
+    }
+    if (item.categoryId === "bonsai") {
+      return "Morning Sun (3-4 hours) with Airy Ambient";
+    }
+    if (item.categoryId === "indoor") {
+      return "Bright Indirect Light or Dappled Shade";
+    }
+  }
+
+  if (item.type === "fish") {
+    if (item.categoryId === "fighter") {
+      return "Subdued Soft Light & Calm Warm Water (24°-28°C)";
+    }
+    if (item.categoryId === "guppy") {
+      return "Moderate Aquarium Light (8-10 hrs) & Filtered Water";
+    }
+    if (item.categoryId === "marine") {
+      return "High-Spectrum Coral Reef LED Lighting";
+    }
+  }
+
+  return item.lightOrWater || "Filtered Light & Ambient Temperature";
+}
+
+/**
+ * Returns blooming season for plants or breeding cycle for fishes in English
  */
 export function getSpecimenBloomingSeason(item: TCategoryItem): string {
-  if (item.bloomingSeason && item.bloomingSeason.trim()) {
+  if (item.bloomingSeason && item.bloomingSeason.trim() && !/[\u0980-\u09FF]/.test(item.bloomingSeason)) {
     return item.bloomingSeason;
   }
 
@@ -5531,70 +5585,36 @@ export function getSpecimenBloomingSeason(item: TCategoryItem): string {
   if (item.type === "plant") {
     if (item.categoryId === "flowers") {
       if (nameLower.includes("water lily") || nameLower.includes("lotus")) {
-        return "বর্ষা ও শরৎকাল (জুন থেকে অক্টোবর)";
+        return "Monsoon to Autumn (June - October)";
       }
       if (nameLower.includes("rose")) {
-        return "শীত ও বসন্তকাল (নভেম্বর থেকে মার্চ)";
+        return "Winter to Spring (November - March)";
       }
-      if (nameLower.includes("jasmine") || nameLower.includes("beli")) {
-        return "গ্রীষ্ম ও বর্ষাকাল (এপ্রিল থেকে আগস্ট)";
+      if (nameLower.includes("jasmine") || nameLower.includes("beli") || nameLower.includes("tagar")) {
+        return "Summer & Monsoon (April - August)";
       }
-      return "বসন্ত ও গ্রীষ্মকাল (মার্চ থেকে সেপ্টেম্বর)";
+      return "Spring & Summer (March - September)";
     }
 
     if (item.categoryId === "bonsai") {
-      return "বসন্তকালে নতুন কচি পাতা গজায় (সারা বছর চিরসবুজ রূপ)";
+      return "Year-Round Evergreen (New Shoots in Spring)";
     }
 
-    return "সারা বছর চিরসবুজ পত্রপল্লব (ইনডোর পাতা বাহার)";
+    return "Year-Round Lush Foliage (Rare Blooms)";
   }
 
-  // Fish breeding cycle
+  // Fish breeding cycle in English
   if (item.type === "fish") {
     if (item.categoryId === "guppy") {
-      return "সারা বছর সক্রিয় (প্রতি ২৮-৩৫ দিনে সরাসরি পোনা প্রসব)";
+      return "Year-Round Active (Livebearer Every 28-35 Days)";
     }
     if (item.categoryId === "fighter") {
-      return "গ্রীষ্ম ও বর্ষাকাল (পানির উপর বাবল নেস্ট বা ফেনার বাসা তৈরি করে ডিম দেয়)";
+      return "Summer & Monsoon (Bubble Nest Spawning)";
     }
-    return "অনুকূল লবণাক্ততা ও রিফ পরিবেশে নির্দিষ্ট ঋতুতে";
+    return "Seasonal Spawning in Optimal Reef Salinity";
   }
 
-  return "গ্রীষ্মমণ্ডলীয় আবহাওয়া অনুযায়ী উপযুক্ত মৌসুমে";
+  return "Seasonal Flowering or Breeding Period";
 }
 
-/**
- * Returns sunlight & atmosphere needs (সূর্যালোক ও আবহাওয়া)
- */
-export function getSpecimenSunlight(item: TCategoryItem): string {
-  if (item.sunlightOrShade && item.sunlightOrShade.trim()) {
-    return item.sunlightOrShade;
-  }
-
-  if (item.type === "plant") {
-    if (item.categoryId === "flowers") {
-      return "সরাসরি তীব্র সূর্যালোক (দৈনিক ৫-৬ ঘণ্টা উজ্জ্বল রোদ)";
-    }
-    if (item.categoryId === "bonsai") {
-      return "সকালের মিষ্টি রোদ (৩-৪ ঘণ্টা) ও মুক্ত বাতাসযুক্ত স্থান";
-    }
-    if (item.categoryId === "indoor") {
-      return "উজ্জ্বল পরোক্ষ আলো বা সেমি-শেড (সরাসরি কড়া রোদ এড়িয়ে চলুন)";
-    }
-  }
-
-  if (item.type === "fish") {
-    if (item.categoryId === "fighter") {
-      return "মৃদু ছায়াযুক্ত আলো, শান্ত স্থির পানি (২৪°-২৮°C উষ্ণতা)";
-    }
-    if (item.categoryId === "guppy") {
-      return "পরিমিত অ্যাকুয়ারিয়াম ডে-লাইট (৮-১০ ঘণ্টা) ও পরিষ্কার ফিল্টারড পানি";
-    }
-    if (item.categoryId === "marine") {
-      return "হাই-স্পেকট্রাম কোরাল রিফ ব্লু-হোয়াইট LED লাইট ও লবণাক্ত পানি";
-    }
-  }
-
-  return item.lightOrWater || "পরিমিত আলো ও অনুকূল প্রাকৃতিক পরিবেশ";
-}
 

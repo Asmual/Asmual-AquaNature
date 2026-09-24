@@ -96,7 +96,7 @@ export default function CategoryShowcaseClient({
                 )}
                 <span>{category.badge}</span>
                 <span className="text-muted-foreground/60">•</span>
-                <span>{category.bengaliName}</span>
+                <span>{category.name}</span>
               </div>
 
               <h1 className="font-heading font-extrabold text-2xl sm:text-4xl text-primary tracking-tight">

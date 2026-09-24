@@ -25,7 +25,8 @@ import {
 import { toast } from "sonner";
 import { 
   TCategoryItem, 
-  getSpecimenRegionalName, 
+  getSpecimenDisplayTitle,
+  getSpecimenScientificName,
   getSpecimenBloomingSeason, 
   getSpecimenSunlight 
 } from "@/data/categories";
@@ -66,18 +67,15 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
   }, [onClose, isZoomed, images.length]);
 
   const currentSafeImage = encodeURI(images[activeImgIndex]);
-  const regionalName = getSpecimenRegionalName(item);
+  const titleInfo = getSpecimenDisplayTitle(item);
+  const scientificName = getSpecimenScientificName(item);
   const bloomingSeason = getSpecimenBloomingSeason(item);
   const sunlightCondition = getSpecimenSunlight(item);
 
-  const cleanBengaliName = item.bengaliName?.includes("•")
-    ? item.bengaliName.split("•")[1].trim()
-    : item.bengaliName || item.name;
-
   const handleShare = async () => {
     const shareData = {
-      title: `${cleanBengaliName} (${item.name}) - Asmual AquaNature Encyclopedia`,
-      text: `জানুন ${cleanBengaliName} (${item.name}) এর পরিচর্যা, আবহাওয়া ও বিজ্ঞানসম্মত তথ্য।`,
+      title: `${titleInfo.fullTitle} - Asmual AquaNature Encyclopedia`,
+      text: `Learn about ${titleInfo.fullTitle} (${scientificName}): care guide, sunlight, climate, and maintenance protocols.`,
       url: window.location.href,
     };
 
@@ -85,18 +83,18 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
       try {
         await navigator.share(shareData);
       } catch (err) {
-        // Fallback to clipboard if user cancelled share sheet
+        // Fallback to clipboard if cancelled
       }
     } else if (navigator.clipboard) {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      toast.success("প্রজাতির লিংক সফলভাবে কপি করা হয়েছে!");
+      toast.success("Specimen guide link copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const handleGoogleSearch = () => {
-    const query = encodeURIComponent(`${item.name} ${item.scientificName || ""} care guide`);
+    const query = encodeURIComponent(`${titleInfo.englishName} ${scientificName} care guide`);
     window.open(`https://www.google.com/search?q=${query}`, "_blank");
   };
 
@@ -116,7 +114,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           <button
             type="button"
             onClick={handleShare}
-            title="তথ্য শেয়ার বা লিংক কপি করুন"
+            title="Share specimen link"
             className="p-2 rounded-full bg-white/90 hover:bg-white text-foreground hover:text-primary shadow-md border border-border transition-colors cursor-pointer"
           >
             {copied ? <CheckCheck className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
@@ -125,7 +123,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           <button
             type="button"
             onClick={() => setIsBookmarked(!isBookmarked)}
-            title="জ্ঞানকোষ বুকমার্কে সংরক্ষণ করুন"
+            title="Bookmark this specimen"
             className="p-2 rounded-full bg-white/90 hover:bg-white text-foreground hover:text-accent shadow-md border border-border transition-colors cursor-pointer"
           >
             <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-accent text-accent" : ""}`} />
@@ -167,7 +165,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
                   ? "bg-amber-600/90 text-white"
                   : "bg-primary text-white"
               }`}>
-                {item.careLevel === "Easy" ? "সহজ যত্ন" : item.careLevel === "Moderate" ? "মাঝারি যত্ন" : "বিশেষ যত্ন"}
+                {item.careLevel} Care
               </span>
             </div>
 
@@ -199,7 +197,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               className="absolute bottom-3.5 right-3.5 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
             >
               <Maximize2 className="w-3.5 h-3.5" />
-              <span className="text-[10px]">{isZoomed ? "রিসেট জুম" : "জুম করে দেখুন"}</span>
+              <span className="text-[10px]">{isZoomed ? "Reset Zoom" : "Click to Zoom"}</span>
             </button>
           </div>
 
@@ -208,7 +206,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="p-3 bg-white/80 border-t border-border flex items-center gap-2 overflow-x-auto scrollbar-none">
               <span className="text-[10px] font-bold text-muted-foreground uppercase shrink-0 mr-1 flex items-center gap-1">
                 <Layers className="w-3 h-3 text-accent" />
-                <span>{images.length} ফটো:</span>
+                <span>{images.length} Photos:</span>
               </span>
               {images.map((img, idx) => (
                 <button
@@ -234,56 +232,40 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           )}
         </div>
 
-        {/* Right Column: Full Encyclopedic Details & Care Guide */}
+        {/* Right Column: Full Encyclopedic Details & Care Guide in English */}
         <div className="w-full md:w-1/2 p-5 sm:p-7 overflow-y-auto space-y-4">
           {/* Header Info */}
-          <div className="space-y-1.5 border-b border-border pb-3.5 pr-20">
+          <div className="space-y-1 border-b border-border pb-3.5 pr-20">
             <div className="flex items-center gap-1.5 text-xs font-bold text-accent">
               <BookOpen className="w-4 h-4 text-accent" />
-              <span>উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত তথ্যকোষ</span>
+              <span>Botanical &amp; Aquatic Encyclopedia</span>
             </div>
 
-            {/* Bengali Name Prominently */}
+            {/* Title: English Name (বাংলা নাম) */}
             <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-primary leading-tight">
-              {cleanBengaliName}
+              {titleInfo.fullTitle}
             </h2>
 
-            {/* English & Scientific Names */}
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-              <span className="font-semibold text-foreground/90">{item.name}</span>
-              {item.scientificName && (
-                <>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-mono italic text-accent font-medium">{item.scientificName}</span>
-                </>
-              )}
-            </div>
-
-            {/* Regional Name in Bangladesh */}
-            <div className="mt-2 p-2 rounded-xl bg-accent-soft/40 border border-accent/20">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-wide block">
-                বাংলাদেশে আঞ্চলিক নাম:
-              </span>
-              <p className="text-xs font-semibold text-primary mt-0.5">
-                {regionalName}
-              </p>
-            </div>
+            {/* Scientific Name in Subtle Italic Font */}
+            <p className="text-xs sm:text-sm italic font-serif text-muted-foreground/80 tracking-normal">
+              {scientificName}
+            </p>
           </div>
 
           {/* Botanical / Species Overview */}
           <div className="space-y-1">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
               <Info className="w-3.5 h-3.5 text-accent" />
-              <span>প্রজাতি পরিচিতি ও বৈশিষ্ট্য</span>
+              <span>Specimen Overview &amp; Profile</span>
             </h3>
             <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed">
               {item.description}
             </p>
           </div>
 
-          {/* Key Facts Grid (Sunlight, Blooming/Breeding, Temp, Care) */}
+          {/* Key Facts Grid in English */}
           <div className="grid grid-cols-2 gap-2.5">
-            {/* Sunlight / Shade */}
+            {/* Sunlight / Water Condition */}
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 {item.type === "plant" ? (
@@ -291,7 +273,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
                 ) : (
                   <Droplets className="w-3.5 h-3.5 text-cyan-500" />
                 )}
-                <span>{item.type === "plant" ? "সূর্যালোক ও আবহাওয়া" : "পানির ধরন ও পরিবেশ"}</span>
+                <span>{item.type === "plant" ? "Sunlight & Lighting" : "Water Chemistry"}</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
                 {sunlightCondition}
@@ -302,7 +284,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-                <span>{item.type === "plant" ? "ফুল ফোটার সময়" : "প্রজনন মৌসুম"}</span>
+                <span>{item.type === "plant" ? "Blooming Season" : "Breeding Cycle"}</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
                 {bloomingSeason}
@@ -313,7 +295,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <Thermometer className="w-3.5 h-3.5 text-rose-500" />
-                <span>অনুকূল তাপমাত্রা</span>
+                <span>Optimal Temperature</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
                 {item.temperature}
@@ -324,30 +306,30 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <Compass className="w-3.5 h-3.5 text-primary" />
-                <span>যত্নের প্রয়োজনীয়তা</span>
+                <span>Care Difficulty</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug font-semibold text-primary">
-                {item.careLevel === "Easy" ? "সহজ (নতুনদের উপযোগী)" : item.careLevel === "Moderate" ? "মাঝারি যত্ন প্রয়োজন" : "অভিজ্ঞদের বিশেষ যত্ন"}
+                {item.careLevel === "Easy" ? "Easy (Beginner Friendly)" : item.careLevel === "Moderate" ? "Moderate Care Needed" : "Advanced Expertise"}
               </p>
             </div>
           </div>
 
-          {/* Full Care & Maintenance Guide */}
+          {/* Full Care & Maintenance Guide in English */}
           <div className="rounded-2xl bg-accent-soft/30 p-4 border border-accent/20 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
-                <span>বিস্তারিত পরিচর্যা ও যত্ন নির্দেশিকা</span>
+                <span>Comprehensive Care &amp; Maintenance Guide</span>
               </h3>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent/20 text-primary">
-                নিয়মিত পরিচর্যা
+                Daily Routine
               </span>
             </div>
 
             <div className="space-y-2 text-xs text-foreground/85">
               <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                 <span className="font-bold text-primary block">
-                  {item.type === "plant" ? "পানি দেওয়ার নিয়ম (Watering):" : "পানি পরিবর্তন ও ফিল্ট্রেশন (Water Care):"}
+                  {item.type === "plant" ? "Hydration & Watering Schedule:" : "Water Care & Filtration:"}
                 </span>
                 <p className="text-muted-foreground leading-relaxed">
                   {item.maintenance.wateringOrWaterChange}
@@ -357,7 +339,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               {item.maintenance.soilOrSubstrate && (
                 <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                   <span className="font-bold text-primary block">
-                    {item.type === "plant" ? "মাটি ও টবের প্রস্তুতি (Soil & Pot):" : "সাবস্ট্রেট ও অ্যাকুয়ারিয়ামের মাপ (Tank & Substrate):"}
+                    {item.type === "plant" ? "Soil Mix & Potting Substrate:" : "Aquarium Substrate & Tank Sizing:"}
                   </span>
                   <p className="text-muted-foreground leading-relaxed">
                     {item.maintenance.soilOrSubstrate}
@@ -367,7 +349,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
 
               <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                 <span className="font-bold text-primary block">
-                  {item.type === "plant" ? "সার ও পুষ্টি উপাদান (Fertilizer):" : "খাদ্য ও পুষ্টি তালিকা (Diet & Nutrition):"}
+                  {item.type === "plant" ? "Fertilizer & Nutrition Regimen:" : "Nutritional Diet & Feeding:"}
                 </span>
                 <p className="text-muted-foreground leading-relaxed">
                   {item.maintenance.feedingOrFertilizer}
@@ -378,7 +360,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             {/* Expert Tips */}
             <div className="pt-2 border-t border-accent/20 space-y-1.5">
               <span className="text-[11px] font-bold text-primary uppercase tracking-wide block">
-                বিশেষজ্ঞ টিপস ও সতর্কতা:
+                Expert Guidelines &amp; Precautions:
               </span>
               <ul className="space-y-1 text-[11px] text-muted-foreground">
                 {item.maintenance.tips.map((tip, idx) => (
@@ -399,7 +381,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface hover:bg-white text-primary border border-border hover:border-accent text-xs font-bold shadow-xs transition-colors cursor-pointer"
             >
               <Search className="w-3.5 h-3.5 text-accent" />
-              <span>গুগলে আরও তথ্য খুঁজুন</span>
+              <span>Search on Google</span>
             </button>
 
             <button
@@ -408,7 +390,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
             >
               <Share2 className="w-3.5 h-3.5 text-accent" />
-              <span>{copied ? "লিংক কপি সম্পন্ন!" : "এই তথ্যটি শেয়ার করুন"}</span>
+              <span>{copied ? "Link Copied!" : "Share Specimen"}</span>
             </button>
           </div>
         </div>
