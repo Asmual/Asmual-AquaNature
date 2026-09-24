@@ -89,16 +89,15 @@ export const Navbar = () => {
   }, []);
 
   const fishCategories = [
-    { name: "Fighter / Betta", desc: "Alien, Dumbo, Red Dragon, Koi Bettas", href: "#categories" },
-    { name: "Guppy Collection", desc: "24k Gold, Albino Blue Topaz, Moscow", href: "#categories" },
-    { name: "Mix Freshwater", desc: "Tetras, Mollies, Angels & Community Fish", href: "#categories" },
-    { name: "SeaWater Fish", desc: "Marine clownfishes, tangs & reef species", href: "#categories" },
+    { name: "Fighter / Betta", desc: "Alien, Dumbo, Red Dragon, Koi Bettas", href: "/category/fighter" },
+    { name: "Guppy Collection", desc: "24k Gold, Albino Blue Topaz, Moscow", href: "/category/guppy" },
+    { name: "SeaWater Fish", desc: "Marine clownfishes, tangs & reef species", href: "/category/marine" },
   ];
 
   const plantCategories = [
-    { name: "Indoor Plants", desc: "Monstera, Peace Lily, Snake Plants, ZZ", href: "#categories" },
-    { name: "Bonsai Plants", desc: "Living miniature trees and dwarf figs", href: "#categories" },
-    { name: "Flower Plants", desc: "Water lilies, roses, seasonal bloomers", href: "#categories" },
+    { name: "Indoor Plants", desc: "Monstera, Peace Lily, Snake Plants, ZZ", href: "/category/indoor" },
+    { name: "Bonsai Plants", desc: "Living miniature trees and dwarf figs", href: "/category/bonsai" },
+    { name: "Flower Plants", desc: "Water lilies, roses, seasonal bloomers", href: "/category/flowers" },
   ];
 
   const handleSignOut = async () => {
@@ -668,7 +667,7 @@ export const Navbar = () => {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface text-muted-foreground border border-border/60">
-                    4 Types
+                    3 Types
                   </span>
                   <ChevronDown
                     className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
