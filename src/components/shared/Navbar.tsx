@@ -27,6 +27,7 @@ import {
   Package,
   ShieldCheck,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 import Logo from "./Logo";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -88,16 +89,17 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Clean category lists - ONLY titles, NO paragraphs or descriptions as requested
   const fishCategories = [
-    { name: "Fighter / Betta", desc: "Alien, Dumbo, Red Dragon, Koi Bettas", href: "/category/fighter" },
-    { name: "Guppy Collection", desc: "24k Gold, Albino Blue Topaz, Moscow", href: "/category/guppy" },
-    { name: "SeaWater Fish", desc: "Marine clownfishes, tangs & reef species", href: "/category/marine" },
+    { name: "Fighter / Betta", href: "/category/fighter" },
+    { name: "Pureline Guppies", href: "/category/guppy" },
+    { name: "SeaWater Fish", href: "/category/marine" },
   ];
 
   const plantCategories = [
-    { name: "Indoor Plants", desc: "Monstera, Peace Lily, Snake Plants, ZZ", href: "/category/indoor" },
-    { name: "Bonsai Plants", desc: "Living miniature trees and dwarf figs", href: "/category/bonsai" },
-    { name: "Flower Plants", desc: "Water lilies, roses, seasonal bloomers", href: "/category/flowers" },
+    { name: "Indoor Plants", href: "/category/indoor" },
+    { name: "Bonsai Plants", href: "/category/bonsai" },
+    { name: "Flower Plants", href: "/category/flowers" },
   ];
 
   const handleSignOut = async () => {
@@ -128,26 +130,27 @@ export const Navbar = () => {
   const userRole = (session?.user as { role?: string })?.role || "Member";
 
   return (
-    <header className="w-full sticky top-0 z-50 transition-all duration-200">
+    <header className="w-full sticky top-0 z-40 transition-all duration-200">
       {/* 1. TOP ANNOUNCEMENT BAR (Deep Navy-Teal #0B4A6F) */}
-      <div className="bg-primary text-white text-xs font-medium py-2 px-3 sm:px-6 lg:px-8 border-b border-primary-dark">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
-          <div className="flex items-center gap-2 text-center sm:text-left">
+      <div className="bg-primary text-white text-xs font-medium py-1.5 px-3 sm:px-6 lg:px-8 border-b border-primary-dark">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 truncate">
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-accent text-primary uppercase tracking-wide shrink-0">
               Notice
             </span>
-            <span className="text-white/90 text-[11px] sm:text-xs">
-              Free Delivery across Dhaka on live fish & plants orders over ৳1,500!
+            <span className="text-white/90 text-[11px] sm:text-xs truncate">
+              Free Delivery across Dhaka on orders over ৳1,500!
             </span>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 text-white/85 text-[11px] sm:text-xs">
+          <div className="flex items-center gap-3 sm:gap-4 text-white/85 text-[11px] sm:text-xs shrink-0">
             <a
               href="tel:+8801700000000"
               className="flex items-center gap-1.5 hover:text-accent transition-colors duration-200"
             >
               <Phone className="w-3.5 h-3.5 text-accent" />
-              <span>+880 1700-000000</span>
+              <span className="hidden sm:inline">+880 1700-000000</span>
+              <span className="sm:hidden">Help</span>
             </a>
             <span className="hidden md:inline text-white/30">|</span>
             <div className="hidden md:flex items-center gap-1.5">
@@ -161,17 +164,19 @@ export const Navbar = () => {
       {/* 2. MAIN HEADER (Clean White with Soft Border and Shadow) */}
       <div
         className={`bg-white transition-all duration-200 border-b border-border ${
-          isScrolled ? "shadow-md py-2" : "shadow-sm py-3"
+          isScrolled ? "shadow-md py-2" : "shadow-xs py-2.5 sm:py-3"
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-2 sm:gap-4 lg:gap-8">
             {/* Logo */}
-            <Logo size="md" />
+            <div className="flex items-center min-w-0">
+              <Logo size="md" />
+            </div>
 
-            {/* Desktop / Tablet Search Bar */}
-            <div className="hidden md:flex flex-1 max-w-sm lg:max-w-lg relative">
-              <div className="w-full flex items-center bg-surface border border-border rounded-[10px] px-3.5 py-2 focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all duration-200">
+            {/* Desktop Search Bar (Hidden on Mobile & Tablet, available in Drawer) */}
+            <div className="hidden lg:flex flex-1 max-w-md xl:max-w-lg relative">
+              <div className="w-full flex items-center bg-surface border border-border rounded-xl px-3.5 py-2 focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all duration-200">
                 <Search className="w-4 h-4 text-muted-foreground mr-2.5 shrink-0" />
                 <input
                   type="text"
@@ -191,38 +196,42 @@ export const Navbar = () => {
               </div>
             </div>
 
-            {/* Action Icons & User Controls */}
-            <div className="flex items-center gap-1.5 sm:gap-2.5">
-              <button
+            {/* Action Icons & User Controls (Right Container: shrink-0 guarantees Hamburger is NEVER hidden!) */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+              {/* Wishlist Button (Shown on sm+ screens, mobile has it in drawer) */}
+              <Link
+                href="#wishlist"
                 aria-label="Wishlist"
-                className="relative p-2 sm:p-2.5 rounded-full text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 cursor-pointer"
+                className="hidden sm:flex relative p-2 sm:p-2.5 rounded-full text-foreground hover:text-primary hover:bg-surface transition-colors duration-200"
               >
                 <Heart className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-accent text-primary text-[10px] font-bold flex items-center justify-center">
                   0
                 </span>
-              </button>
+              </Link>
 
-              <button
+              {/* Cart Button (Always visible on all screen sizes) */}
+              <Link
+                href="#cart"
                 aria-label="Cart"
-                className="relative p-2 sm:p-2.5 rounded-full text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-2 cursor-pointer"
+                className="relative p-2 sm:p-2.5 rounded-full text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
               >
                 <div className="relative">
-                  <ShoppingBag className="w-5 h-5" />
+                  <ShoppingBag className="w-5 h-5 text-primary" />
                   <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-danger text-white text-[10px] font-bold flex items-center justify-center">
                     0
                   </span>
                 </div>
-                <span className="hidden xl:inline text-xs font-semibold text-primary">
+                <span className="hidden xl:inline text-xs font-bold text-primary">
                   ৳0.00
                 </span>
-              </button>
+              </Link>
 
-              {/* User Account / Avatar Dropdown for Desktop */}
+              {/* User Account / Avatar Dropdown (Shown on desktop & tablet sm+, mobile has it in drawer) */}
               {isPending ? (
-                <div className="w-8 h-8 rounded-full bg-surface border border-border animate-pulse shrink-0" />
+                <div className="hidden sm:block w-8 h-8 rounded-full bg-surface border border-border animate-pulse shrink-0" />
               ) : session?.user ? (
-                <div className="relative" ref={dropdownRef}>
+                <div className="hidden sm:block relative" ref={dropdownRef}>
                   <button
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                     className="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-surface border border-transparent hover:border-border transition-all duration-200 cursor-pointer group"
@@ -282,7 +291,7 @@ export const Navbar = () => {
                           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
                         >
                           <User className="w-4 h-4 text-accent" />
-                          <span>View Profile</span>
+                          <span>My Profile</span>
                         </Link>
 
                         <Link
@@ -327,20 +336,23 @@ export const Navbar = () => {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+                  className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary hover:bg-primary-dark text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all duration-200"
                 >
                   <User className="w-4 h-4" />
                   <span>Sign In</span>
                 </Link>
               )}
 
-              {/* Hamburger Menu Toggle Button (Visible on Mobile & Tablet: <1024px) */}
+              {/* ============================================================== */}
+              {/* HAMBURGER MENU BUTTON (ALWAYS VISIBLE & PROMINENT ON MOBILE & TABLET: < 1024px) */}
+              {/* ============================================================== */}
               <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
-                className="lg:hidden p-2 sm:p-2.5 rounded-xl text-primary bg-surface hover:bg-accent-soft border border-border transition-colors duration-200 cursor-pointer"
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Open Navigation Menu"
+                className="lg:hidden p-2 sm:p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark active:scale-95 shadow-xs transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </button>
             </div>
           </div>
@@ -358,7 +370,7 @@ export const Navbar = () => {
                 </Link>
               </li>
 
-              {/* Fishes Dropdown */}
+              {/* Fishes Dropdown - ONLY Titles, No Descriptions */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("fish")}
@@ -371,20 +383,16 @@ export const Navbar = () => {
                 </button>
 
                 {activeDropdown === "fish" && (
-                  <div className="absolute left-0 top-full pt-2 w-72 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
-                    <div className="bg-white rounded-xl border border-border shadow-lg p-3 space-y-1">
+                  <div className="absolute left-0 top-full pt-2 w-64 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
+                    <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
                       {fishCategories.map((item, idx) => (
                         <Link
                           key={idx}
                           href={item.href}
-                          className="block p-2.5 rounded-lg hover:bg-surface transition-colors duration-200"
+                          className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
                         >
-                          <div className="text-sm font-semibold text-primary">
-                            {item.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            {item.desc}
-                          </div>
+                          <span>{item.name}</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground" />
                         </Link>
                       ))}
                     </div>
@@ -392,7 +400,7 @@ export const Navbar = () => {
                 )}
               </li>
 
-              {/* Plants Dropdown */}
+              {/* Plants Dropdown - ONLY Titles, No Descriptions */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("plants")}
@@ -405,20 +413,16 @@ export const Navbar = () => {
                 </button>
 
                 {activeDropdown === "plants" && (
-                  <div className="absolute left-0 top-full pt-2 w-72 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
-                    <div className="bg-white rounded-xl border border-border shadow-lg p-3 space-y-1">
+                  <div className="absolute left-0 top-full pt-2 w-64 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
+                    <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
                       {plantCategories.map((item, idx) => (
                         <Link
                           key={idx}
                           href={item.href}
-                          className="block p-2.5 rounded-lg hover:bg-surface transition-colors duration-200"
+                          className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
                         >
-                          <div className="text-sm font-semibold text-primary">
-                            {item.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            {item.desc}
-                          </div>
+                          <span>{item.name}</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground" />
                         </Link>
                       ))}
                     </div>
@@ -428,17 +432,17 @@ export const Navbar = () => {
 
               <li>
                 <Link
-                  href="#categories"
+                  href="/#categories"
                   className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
                 >
                   <Package className="w-4 h-4 text-muted-foreground" />
-                  <span>Aquarium & Gear</span>
+                  <span>Aquarium &amp; Gear</span>
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href="#deals"
+                  href="/#deals"
                   className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
                 >
                   <Flame className="w-4 h-4 text-danger" />
@@ -478,11 +482,13 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* 4. COMPREHENSIVE RESPONSIVE MOBILE & TABLET HAMBURGER DRAWER */}
+      {/* ========================================================================= */}
+      {/* 4. FULLY RESPONSIVE MOBILE & TABLET DRAWER WITH ALL MENUS (Z-INDEX 9999) */}
+      {/* ========================================================================= */}
       {/* Backdrop Overlay */}
       <div
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden transition-opacity duration-300 ${
-          mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed inset-0 bg-black/65 backdrop-blur-sm z-[9998] lg:hidden transition-opacity duration-300 ${
+          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileMenuOpen(false)}
         aria-hidden="true"
@@ -490,15 +496,16 @@ export const Navbar = () => {
 
       {/* Sliding Drawer Container */}
       <aside
-        className={`fixed top-0 right-0 bottom-0 w-[90%] max-w-sm sm:max-w-md bg-white z-50 lg:hidden shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 bottom-0 w-[88%] max-w-sm sm:max-w-md bg-white z-[9999] lg:hidden shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
         }`}
         aria-label="Mobile Navigation Drawer"
       >
         {/* Drawer Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between bg-surface/70">
+        <div className="p-4 border-b border-border flex items-center justify-between bg-surface/80">
           <Logo size="sm" />
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Close menu"
             className="p-2 rounded-full text-foreground hover:text-primary hover:bg-white border border-border transition-colors cursor-pointer"
@@ -522,6 +529,7 @@ export const Navbar = () => {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery("")}
                   className="text-xs text-muted-foreground hover:text-foreground px-1"
                 >
@@ -565,6 +573,7 @@ export const Navbar = () => {
                   <span>My Profile</span>
                 </Link>
                 <button
+                  type="button"
                   onClick={handleSignOut}
                   disabled={isLoggingOut}
                   className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-100 hover:text-white text-xs font-semibold backdrop-blur-sm transition-colors disabled:opacity-50 cursor-pointer"
@@ -586,14 +595,14 @@ export const Navbar = () => {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-primary">Aqua Member Club</p>
-                  <p className="text-[11px] text-muted-foreground">Sign in for member perks & order status</p>
+                  <p className="text-[11px] text-muted-foreground">Sign in for member perks &amp; orders</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors text-center"
+                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors text-center"
                 >
                   <User className="w-3.5 h-3.5" />
                   <span>Sign In</span>
@@ -601,7 +610,7 @@ export const Navbar = () => {
                 <Link
                   href="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white border border-primary/30 hover:border-accent text-primary text-xs font-bold shadow-sm transition-colors text-center"
+                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white border border-primary/30 hover:border-accent text-primary text-xs font-bold shadow-sm transition-colors text-center"
                 >
                   <span>Create Account</span>
                 </Link>
@@ -640,13 +649,15 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          {/* Navigation Links List */}
+          {/* ============================================================== */}
+          {/* NAVIGATION LINKS LIST - ONLY TITLES, NO SHORT PARAGRAPHS */}
+          {/* ============================================================== */}
           <div className="space-y-1.5 pt-1">
             {/* 1. Home Link */}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-primary bg-accent-soft/50 hover:bg-accent-soft transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-primary bg-accent-soft/50 hover:bg-accent-soft transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <Home className="w-4 h-4 text-primary" />
@@ -655,121 +666,126 @@ export const Navbar = () => {
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
 
-            {/* 2. Fishes Accordion */}
+            {/* 2. Fishes Accordion - ONLY Titles */}
             <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
               <button
+                type="button"
                 onClick={() => setMobileFishOpen(!mobileFishOpen)}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-semibold text-foreground hover:bg-surface transition-colors cursor-pointer"
+                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
                   <Fish className="w-4 h-4 text-primary" />
-                  <span>Fishes & Species</span>
+                  <span>Fishes</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface text-muted-foreground border border-border/60">
-                    3 Types
-                  </span>
                   <ChevronDown
                     className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                      mobileFishOpen ? "rotate-180" : ""
+                      mobileFishOpen ? "rotate-180 text-primary" : ""
                     }`}
                   />
                 </div>
               </button>
 
               {mobileFishOpen && (
-                <div className="p-2 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-surface/40 border-t border-border/40">
+                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
                   {fishCategories.map((item, idx) => (
                     <Link
                       key={idx}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="p-2.5 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all"
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
                     >
-                      <div className="text-xs font-bold text-primary">{item.name}</div>
-                      <div className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                        {item.desc}
-                      </div>
+                      <span>{item.name}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                     </Link>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* 3. Plants Accordion */}
+            {/* 3. Plants Accordion - ONLY Titles */}
             <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
               <button
+                type="button"
                 onClick={() => setMobilePlantsOpen(!mobilePlantsOpen)}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-semibold text-foreground hover:bg-surface transition-colors cursor-pointer"
+                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
                   <Leaf className="w-4 h-4 text-accent" />
-                  <span>Plants, Flora & Bonsai</span>
+                  <span>Plants</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface text-muted-foreground border border-border/60">
-                    3 Types
-                  </span>
                   <ChevronDown
                     className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
-                      mobilePlantsOpen ? "rotate-180" : ""
+                      mobilePlantsOpen ? "rotate-180 text-primary" : ""
                     }`}
                   />
                 </div>
               </button>
 
               {mobilePlantsOpen && (
-                <div className="p-2 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-surface/40 border-t border-border/40">
+                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
                   {plantCategories.map((item, idx) => (
                     <Link
                       key={idx}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="p-2.5 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all"
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
                     >
-                      <div className="text-xs font-bold text-primary">{item.name}</div>
-                      <div className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                        {item.desc}
-                      </div>
+                      <span>{item.name}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                     </Link>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* 4. Aquarium & Gear */}
+            {/* 4. All Categories Catalog */}
             <Link
-              href="#categories"
+              href="/#categories"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-2.5">
-                <Package className="w-4 h-4 text-muted-foreground" />
-                <span>Aquarium & Gear</span>
+                <Layers className="w-4 h-4 text-muted-foreground" />
+                <span>All Categories</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
 
-            {/* 5. Hot Deals */}
+            {/* 5. Aquarium & Gear */}
             <Link
-              href="#deals"
+              href="/#categories"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-danger hover:bg-red-50/50 transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Package className="w-4 h-4 text-muted-foreground" />
+                <span>Aquarium &amp; Gear</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </Link>
+
+            {/* 6. Hot Deals */}
+            <Link
+              href="/#deals"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-danger hover:bg-red-50/50 transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <Flame className="w-4 h-4 text-danger" />
-                <span>Hot Deals & Flash Sales</span>
+                <span>Hot Deals</span>
               </div>
               <span className="bg-danger text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                 Sale
               </span>
             </Link>
 
-            {/* 6. About Us */}
+            {/* 7. About Us */}
             <Link
               href="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <Info className="w-4 h-4 text-muted-foreground" />
@@ -778,22 +794,22 @@ export const Navbar = () => {
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
 
-            {/* 7. Contact */}
+            {/* 8. Contact */}
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-foreground hover:bg-surface transition-colors"
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <PhoneCall className="w-4 h-4 text-muted-foreground" />
-                <span>Contact & Store</span>
+                <span>Contact</span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </Link>
           </div>
 
           {/* Customer Hotline & Hours Box */}
-          <div className="rounded-2xl bg-surface border border-border p-3.5 space-y-2.5">
+          <div className="rounded-2xl bg-surface border border-border p-3.5 space-y-2">
             <div className="flex items-center gap-2 text-xs font-bold text-primary">
               <Phone className="w-3.5 h-3.5 text-accent" />
               <span>Customer Care Hotline</span>
@@ -806,7 +822,7 @@ export const Navbar = () => {
             </a>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <Clock className="w-3 h-3 text-accent" />
-              <span>Support Hours: 9:00 AM - 10:00 PM (Everyday)</span>
+              <span>Hours: 9:00 AM - 10:00 PM (Daily)</span>
             </div>
           </div>
         </div>
@@ -815,7 +831,7 @@ export const Navbar = () => {
         <div className="p-3 border-t border-border bg-surface text-center">
           <div className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
             <ShieldCheck className="w-4 h-4 text-accent" />
-            <span className="font-medium">100% Live Arrival Guarantee in Dhaka</span>
+            <span className="font-medium">100% Live Arrival Guarantee</span>
           </div>
         </div>
       </aside>

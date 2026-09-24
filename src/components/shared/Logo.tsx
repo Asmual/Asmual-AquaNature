@@ -15,21 +15,21 @@ export const Logo: React.FC<LogoProps> = ({
   size = "md",
 }) => {
   const sizeMap = {
-    sm: { img: 38, title: "text-lg", sub: "text-[9px]" },
-    md: { img: 48, title: "text-xl sm:text-2xl", sub: "text-[10px] sm:text-[11px]" },
-    lg: { img: 58, title: "text-2xl sm:text-3xl", sub: "text-xs" },
+    sm: { img: 34, title: "text-sm sm:text-lg", sub: "text-[8px] sm:text-[9px]" },
+    md: { img: 42, title: "text-base sm:text-xl lg:text-2xl", sub: "text-[9px] sm:text-[10px]" },
+    lg: { img: 52, title: "text-lg sm:text-2xl lg:text-3xl", sub: "text-[10px] sm:text-xs" },
   };
 
   const current = sizeMap[size];
 
   return (
-    <Link href="/" className={cn("flex items-center gap-2.5 sm:gap-3 group shrink-0", className)}>
+    <Link href="/" className={cn("flex items-center gap-2 sm:gap-3 group min-w-0 shrink", className)}>
       <div
         className={cn(
           "relative shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105",
-          size === "sm" && "w-9 h-9",
-          size === "md" && "w-11 h-11 sm:w-12 sm:h-12",
-          size === "lg" && "w-14 h-14"
+          size === "sm" && "w-8 h-8 sm:w-9 sm:h-9",
+          size === "md" && "w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12",
+          size === "lg" && "w-11 h-11 sm:w-14 sm:h-14"
         )}
       >
         <Image
@@ -43,10 +43,10 @@ export const Logo: React.FC<LogoProps> = ({
       </div>
 
       {showText && (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-0">
           <span
             className={cn(
-              "font-heading font-extrabold text-primary tracking-tight leading-none group-hover:text-primary-dark transition-colors",
+              "font-heading font-extrabold text-primary tracking-tight leading-none group-hover:text-primary-dark transition-colors truncate",
               current.title
             )}
           >
@@ -54,7 +54,7 @@ export const Logo: React.FC<LogoProps> = ({
           </span>
           <span
             className={cn(
-              "font-semibold text-muted-foreground tracking-wider uppercase mt-0.5",
+              "font-semibold text-muted-foreground tracking-wider uppercase mt-0.5 truncate hidden xs:inline-block",
               current.sub
             )}
           >
