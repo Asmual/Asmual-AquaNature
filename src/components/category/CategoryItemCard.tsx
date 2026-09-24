@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { 
   Droplets, 
   Sun, 
@@ -24,10 +25,9 @@ import {
 
 interface CategoryItemCardProps {
   item: TCategoryItem;
-  onSelect: (item: TCategoryItem) => void;
 }
 
-export default function CategoryItemCard({ item, onSelect }: CategoryItemCardProps) {
+export default function CategoryItemCard({ item }: CategoryItemCardProps) {
   const images = item.images && item.images.length > 0 ? item.images : [item.image];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -46,11 +46,13 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
   }, [images.length, isHovered]);
 
   const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setCurrentIndex((prev) => (prev + 1) % images.length);
   };
@@ -62,11 +64,11 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
   const sunlightCondition = getSpecimenSunlight(item);
 
   return (
-    <div
-      onClick={() => onSelect(item)}
+    <Link
+      href={`/item/${item.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white rounded-2xl border border-border/80 overflow-hidden shadow-xs hover:shadow-xl hover:border-accent/60 transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1 relative"
+      className="group bg-white rounded-2xl border border-border/80 overflow-hidden shadow-xs hover:shadow-xl hover:border-accent/60 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 relative cursor-pointer"
     >
       {/* Top Image Preview Frame with Auto-Slider & Badges */}
       <div className="relative w-full h-44 sm:h-48 overflow-hidden bg-surface">
@@ -108,6 +110,7 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
           <button
             type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               setIsBookmarked(!isBookmarked);
             }}
@@ -189,7 +192,7 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
           </div>
         </div>
 
-        {/* Action Button Footer in English */}
+        {/* Action Button Footer linking to /item/[id] */}
         <div className="pt-2 border-t border-border/60">
           <div className="w-full flex items-center justify-between text-xs font-bold text-primary group-hover:text-accent transition-colors">
             <span className="flex items-center gap-1 text-[11px]">
@@ -202,6 +205,6 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

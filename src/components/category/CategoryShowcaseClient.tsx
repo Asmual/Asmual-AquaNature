@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { TCategoryMeta, TCategoryItem, CATEGORIES_META } from "@/data/categories";
 import CategoryItemCard from "./CategoryItemCard";
-import ItemDetailModal from "./ItemDetailModal";
 
 interface CategoryShowcaseClientProps {
   category: TCategoryMeta;
@@ -31,7 +30,6 @@ export default function CategoryShowcaseClient({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedTag, setSelectedTag] = useState<string>("All");
-  const [activeItem, setActiveItem] = useState<TCategoryItem | null>(null);
 
   // Extract all unique tags for filter pills
   const allTags = useMemo(() => {
@@ -237,7 +235,6 @@ export default function CategoryShowcaseClient({
               <CategoryItemCard
                 key={item.id}
                 item={item}
-                onSelect={(selected) => setActiveItem(selected)}
               />
             ))}
           </div>
@@ -265,14 +262,6 @@ export default function CategoryShowcaseClient({
           </div>
         )}
       </section>
-
-      {/* 4. COMPREHENSIVE ITEM DETAILS MODAL */}
-      {activeItem && (
-        <ItemDetailModal
-          item={activeItem}
-          onClose={() => setActiveItem(null)}
-        />
-      )}
     </div>
   );
 }

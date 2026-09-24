@@ -57,7 +57,7 @@ export const CATEGORIES_META: TCategoryMeta[] = [
   {
     "id": "bonsai",
     "slug": "bonsai",
-    "name": "Living Bonsai Art",
+    "name": "Bonsai Plants",
     "bengaliName": "বনসাই প্ল্যান্টস",
     "type": "plant",
     "badge": "Ancient Craft",
@@ -83,7 +83,7 @@ export const CATEGORIES_META: TCategoryMeta[] = [
   {
     "id": "guppy",
     "slug": "guppy",
-    "name": "Pureline Guppies",
+    "name": "Guppy Fish",
     "bengaliName": "পিয়োরলাইন গাপ্পি",
     "type": "fish",
     "badge": "Champion Strains",
@@ -96,7 +96,7 @@ export const CATEGORIES_META: TCategoryMeta[] = [
   {
     "id": "fighter",
     "slug": "fighter",
-    "name": "Fighter / Betta",
+    "name": "Betta Fish",
     "bengaliName": "ফাইটার / বেটা ফিশ",
     "type": "fish",
     "badge": "Show Grade",
@@ -109,7 +109,7 @@ export const CATEGORIES_META: TCategoryMeta[] = [
   {
     "id": "marine",
     "slug": "marine",
-    "name": "SeaWater Fish",
+    "name": "Marine Fish",
     "bengaliName": "সি ওয়াটার ফিশ",
     "type": "fish",
     "badge": "Reef Safe",
@@ -5429,6 +5429,10 @@ export function getItemsByCategory(categoryId: string): TCategoryItem[] {
 
 export function getItemById(id: string): TCategoryItem | undefined {
   return CATEGORY_ITEMS.find((item) => item.id === id);
+}
+
+export function getRelatedItems(categoryId: string, currentItemId: string, limit = 4): TCategoryItem[] {
+  return CATEGORY_ITEMS.filter((item) => item.categoryId === categoryId && item.id !== currentItemId).slice(0, limit);
 }
 
 /**

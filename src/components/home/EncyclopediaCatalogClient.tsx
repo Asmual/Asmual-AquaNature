@@ -7,23 +7,18 @@ import {
   Layers, 
   Leaf, 
   Fish, 
-  BookOpen,
-  CheckCircle2,
 } from "lucide-react";
 import { 
-  TCategoryItem, 
   CATEGORY_ITEMS, 
   CATEGORIES_META 
 } from "@/data/categories";
 import CategoryItemCard from "@/components/category/CategoryItemCard";
-import ItemDetailModal from "@/components/category/ItemDetailModal";
 
 export default function EncyclopediaCatalogClient() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCare, setSelectedCare] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
-  const [activeItem, setActiveItem] = useState<TCategoryItem | null>(null);
 
   // Filter items based on active category, search query, care level, and type
   const filteredItems = useMemo(() => {
@@ -64,46 +59,10 @@ export default function EncyclopediaCatalogClient() {
 
   return (
     <div className="w-full">
-      {/* 1. COMPACT ENCYCLOPEDIA HEADER BANNER IN ENGLISH */}
-      <section className="bg-gradient-to-b from-primary/10 via-surface to-background border-b border-border py-8 sm:py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-primary text-xs font-extrabold uppercase tracking-wider border border-accent/20">
-              <BookOpen className="w-3.5 h-3.5 text-accent" />
-              <span>Botanical &amp; Aquatic Encyclopedia</span>
-            </div>
-
-            <h1 className="font-heading font-extrabold text-2xl sm:text-4xl lg:text-5xl text-primary tracking-tight leading-tight">
-              Living Botanical &amp; Aquatic Knowledge Repository
-            </h1>
-
-            <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
-              Explore authentic scientific taxonomy, lighting requirements, climate adaptation, and comprehensive care guides for indoor plants, living bonsai art, water lilies, and show-grade aquarium fishes.
-            </p>
-
-            {/* Quick Live Stats Pill in English */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
-                <Leaf className="w-3.5 h-3.5 text-accent" />
-                <span>108+ Flora Species</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
-                <Fish className="w-3.5 h-3.5 text-primary" />
-                <span>46+ Aquatic Species</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-emerald-700">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Free Open Knowledge Hub</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. FILTER & SEARCH CONTROL BAR */}
-      <section className="sticky top-[69px] z-30 bg-white/95 backdrop-blur-md border-b border-border shadow-2xs py-3.5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-          {/* Search Input and Type Toggles */}
+      {/* 1. DIRECT START WITH CATEGORIES & SEARCH BAR (NO BIG HERO SECTION) */}
+      <section className="bg-surface/60 border-b border-border shadow-2xs py-4 sm:py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3.5">
+          {/* Top Bar: Live Search & Kingdom Toggle */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Live Search Bar */}
             <div className="relative flex-1 max-w-xl">
@@ -112,8 +71,8 @@ export default function EncyclopediaCatalogClient() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by English, Bengali, or scientific name (e.g. Monstera, Betta, Water Lily, Ficus)..."
-                className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm bg-surface border border-border rounded-xl focus:outline-none focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20 transition-all text-foreground"
+                placeholder="Search species (e.g. Monstera, Betta, Water Lily, Ficus)..."
+                className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm bg-white border border-border rounded-xl focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-foreground"
               />
               {searchQuery && (
                 <button
@@ -126,7 +85,7 @@ export default function EncyclopediaCatalogClient() {
               )}
             </div>
 
-            {/* Kingdom Filter (All / Plants / Aquatic Fishes) */}
+            {/* Kingdom Toggles */}
             <div className="flex items-center gap-1.5 self-center md:self-auto overflow-x-auto">
               <button
                 type="button"
@@ -137,10 +96,10 @@ export default function EncyclopediaCatalogClient() {
                 className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   selectedType === "all"
                     ? "bg-primary text-white shadow-xs"
-                    : "bg-surface text-foreground hover:bg-white border border-border"
+                    : "bg-white text-foreground hover:bg-surface border border-border"
                 }`}
               >
-                All Biodiversity
+                All Species
               </button>
 
               <button
@@ -154,11 +113,11 @@ export default function EncyclopediaCatalogClient() {
                 className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   selectedType === "plant"
                     ? "bg-accent text-primary shadow-xs"
-                    : "bg-surface text-foreground hover:bg-white border border-border"
+                    : "bg-white text-foreground hover:bg-surface border border-border"
                 }`}
               >
                 <Leaf className="w-3.5 h-3.5 text-accent" />
-                <span>Flora (Plants)</span>
+                <span>Plants</span>
               </button>
 
               <button
@@ -172,29 +131,29 @@ export default function EncyclopediaCatalogClient() {
                 className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   selectedType === "fish"
                     ? "bg-primary text-white shadow-xs"
-                    : "bg-surface text-foreground hover:bg-white border border-border"
+                    : "bg-white text-foreground hover:bg-surface border border-border"
                 }`}
               >
                 <Fish className="w-3.5 h-3.5 text-primary" />
-                <span>Aquatic Fauna (Fishes)</span>
+                <span>Fishes</span>
               </button>
             </div>
           </div>
 
-          {/* 6 Major Category Filter Pills (Pure English, NO brackets) */}
+          {/* 6 Category Filter Pills (Clean 2-Word Titles, NO Slashes, NO Brackets) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <button
               type="button"
               onClick={() => setSelectedCategory("all")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
                 selectedCategory === "all"
                   ? "bg-primary text-white border-primary shadow-2xs"
-                  : "bg-surface text-foreground hover:bg-white border-border"
+                  : "bg-white text-foreground hover:bg-surface border-border"
               }`}
             >
               <span>All Categories</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                selectedCategory === "all" ? "bg-accent text-primary" : "bg-white text-muted-foreground"
+                selectedCategory === "all" ? "bg-accent text-primary" : "bg-surface text-muted-foreground"
               }`}>
                 {CATEGORY_ITEMS.length}
               </span>
@@ -202,7 +161,6 @@ export default function EncyclopediaCatalogClient() {
 
             {CATEGORIES_META.map((cat) => {
               const isSelected = selectedCategory === cat.id;
-              // Dim if category doesn't match selected type
               if (selectedType !== "all" && cat.type !== selectedType) return null;
 
               return (
@@ -210,7 +168,7 @@ export default function EncyclopediaCatalogClient() {
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
                     isSelected
                       ? "bg-primary text-white border-primary shadow-2xs"
                       : "bg-white text-foreground hover:border-accent hover:text-primary border-border"
@@ -232,12 +190,12 @@ export default function EncyclopediaCatalogClient() {
             })}
           </div>
 
-          {/* Result Count and Quick Care Filter */}
+          {/* Result Count and Care Level Filter Bar */}
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border/60">
             <div className="flex items-center gap-1.5 font-medium">
               <Layers className="w-3.5 h-3.5 text-accent" />
               <span>
-                Showing <strong className="text-primary font-bold">{filteredItems.length}</strong> documented species
+                Showing <strong className="text-primary font-bold">{filteredItems.length}</strong> species
               </span>
             </div>
 
@@ -283,15 +241,14 @@ export default function EncyclopediaCatalogClient() {
         </div>
       </section>
 
-      {/* 3. DIRECT 4-COLUMN COMPACT ENCYCLOPEDIA GRID */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      {/* 2. DIRECT 4-COLUMN COMPACT ENCYCLOPEDIA GRID */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             {filteredItems.map((item) => (
               <CategoryItemCard
                 key={item.id}
                 item={item}
-                onSelect={(selected) => setActiveItem(selected)}
               />
             ))}
           </div>
@@ -321,14 +278,6 @@ export default function EncyclopediaCatalogClient() {
           </div>
         )}
       </section>
-
-      {/* 4. COMPREHENSIVE BOTANICAL & AQUATIC DETAIL MODAL */}
-      {activeItem && (
-        <ItemDetailModal
-          item={activeItem}
-          onClose={() => setActiveItem(null)}
-        />
-      )}
     </div>
   );
 }
