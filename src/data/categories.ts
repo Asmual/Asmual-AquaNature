@@ -121,9 +121,9 @@ export const CATEGORIES_META: TCategoryMeta[] = [
 export const CATEGORY_ITEMS: TCategoryItem[] = [
   {
     "id": "indoor-1",
-    "name": "Aglaonema (অ্যাগ্লোনেমা)",
+    "name": "Aglaonema (মানিপ্ল্যান্ট)",
     "scientificName": "Aglaonema Specimen",
-    "bengaliName": "ইনডোর প্ল্যান্টস • Aglaonema (অ্যাগ্লোনেমা)",
+    "bengaliName": "ইনডোর প্ল্যান্টস • Aglaonema (মানিপ্ল্যান্ট)",
     "categoryId": "indoor",
     "categoryName": "Indoor Plants",
     "image": "/images/Plants/Indoor Plants/Aglonema-2.jpg",
@@ -131,7 +131,7 @@ export const CATEGORY_ITEMS: TCategoryItem[] = [
       "/images/Plants/Indoor Plants/Aglonema-2.jpg",
       "/images/Plants/Indoor Plants/Aglonema.jpg"
     ],
-    "description": "A prime, hand-selected specimen of Aglaonema (অ্যাগ্লোনেমা) with 2 verified showcase photos in our Indoor Plants collection. Nurtured in ideal conditions with certified vitality.",
+    "description": "A prime, hand-selected specimen of Aglaonema (মানিপ্ল্যান্ট) with 2 verified showcase photos in our Indoor Plants collection. Nurtured in ideal conditions with certified vitality.",
     "type": "plant",
     "careLevel": "Easy",
     "lightOrWater": "Bright Indirect to Medium Light",

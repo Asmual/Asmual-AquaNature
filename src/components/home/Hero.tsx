@@ -146,7 +146,7 @@ export const Hero = () => {
                 href="#categories"
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-all duration-200"
               >
-                <span>Explore 7 Living Categories</span>
+                <span>Explore 6 Living Collections</span>
                 <ArrowRight className="w-3.5 h-3.5 text-accent" />
               </Link>
             </div>

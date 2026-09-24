@@ -122,7 +122,7 @@ function normalizeKey(filename) {
 // Map key to English Name (বাংলা নাম)
 const titleDictionary = {
   // Indoor Plants
-  'aglaonema': 'Aglaonema (অ্যাগ্লোনেমা)',
+  'aglaonema': 'Aglaonema (মানিপ্ল্যান্ট)',
   'aloe vera': 'Aloe Vera (অ্যালোভেরা)',
   'anthurium': 'Anthurium (অ্যান্থুরিয়াম)',
   'bunny ears cactus': 'Bunny Ears Cactus (বানি ইয়ার ক্যাকটাস)',

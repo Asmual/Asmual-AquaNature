@@ -225,7 +225,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="font-mono text-primary font-medium">{item.scientificName}</span>
               <span>•</span>
-              <span className="text-muted-foreground">{item.bengaliName}</span>
+              <span className="text-muted-foreground font-medium">{item.categoryName} Department</span>
             </div>
           </div>
 

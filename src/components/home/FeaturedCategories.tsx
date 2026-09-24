@@ -83,15 +83,10 @@ export default function FeaturedCategories() {
                   <span>{cat.itemCount} Items</span>
                 </div>
 
-                {/* Title */}
+                {/* Title with English (বাংলা নাম) */}
                 <h3 className="font-heading font-bold text-xs sm:text-sm text-foreground mt-1.5 group-hover:text-primary transition-colors leading-tight">
-                  {cat.name}
+                  {cat.name} <span className="text-primary/90 font-medium">({cat.bengaliName})</span>
                 </h3>
-
-                {/* Bengali Subtitle / Tagline */}
-                <p className="text-[10px] font-medium text-primary/80 mt-0.5">
-                  {cat.bengaliName}
-                </p>
 
                 {/* Short Description */}
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-snug">
