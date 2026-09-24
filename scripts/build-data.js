@@ -80,12 +80,11 @@ const categoriesMeta = [
 
 function normalizeKey(filename) {
   let name = filename.replace(/\.(jpg|jpeg|png|webp)(\.(jpg|png))?$/i, '');
-  // normalize number suffixes: -1, -2, - (1), _2, (1), etc.
   name = name.replace(/[-_ ]*(\(?\d+\)?)+$/g, '');
   name = name.replace(/[-_ ]+$/g, '');
   name = name.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
 
-  // Special aliases to consolidate identical plants
+  // Consolidation mappings
   if (name.includes('aglonema') || name.includes('aglaonema')) return 'aglaonema';
   if (name.includes('money plant')) return 'money plant';
   if (name.includes('coin plant')) return 'coin plant';
@@ -95,72 +94,209 @@ function normalizeKey(filename) {
   if (name.includes('zz')) return 'zz plant';
   if (name.includes('calathea')) return 'calathea';
   if (name.includes('culius') || name.includes('coleus')) return 'coleus';
-  if (name.includes('dump cane')) return 'dumb cane dieffenbachia';
+  if (name.includes('dump cane')) return 'dumb cane';
   if (name.includes('devils backbone') || name.includes("devil's backbone")) return "devil's backbone";
+  if (name.includes('caladium') || name.includes('ক্যালডিয়াম')) return 'caladium';
   
   if (name.includes('nemo')) return 'nemo clownfish';
   if (name.includes('blue tang')) return 'blue tang';
   if (name.includes('yellow tang')) return 'yellow tang';
 
   if (name.includes('ficus benjamina')) return 'ficus benjamina';
-  if (name.includes('ficus religiosa')) return 'ficus religiosa peepal';
+  if (name.includes('ficus religiosa')) return 'ficus religiosa';
   if (name.includes('water lily')) return 'water lily';
   if (name.includes('alamanda') || name.includes('almanda')) return 'allamanda';
-  if (name.includes('bely')) return 'beli arabian jasmine';
+  if (name.includes('bely')) return 'beli jasmine';
   if (name.includes('dalia')) return 'dahlia';
   if (name.includes('marigold')) return 'marigold';
-  if (name.includes('tube rose')) return 'tuberose rajnigandha';
-  if (name.includes('stol poddo')) return 'confederate rose stol poddo';
+  if (name.includes('tube rose')) return 'tuberose';
+  if (name.includes('stol poddo')) return 'confederate rose';
   if (name.includes('red moscow')) return 'red moscow guppy';
   if (name.includes('black moscow')) return 'black moscow guppy';
-  if (name.includes('blue topaz')) return 'albino blue topaz guppy';
-  if (name.includes('full gold') || name.includes('24k gold')) return '24k full gold guppy';
+  if (name.includes('blue topaz')) return 'blue topaz guppy';
+  if (name.includes('full gold') || name.includes('24k gold')) return '24k gold guppy';
 
   return name;
 }
 
+// Map key to English Name (বাংলা নাম)
+const titleDictionary = {
+  // Indoor Plants
+  'aglaonema': 'Aglaonema (অ্যাগ্লোনেমা)',
+  'aloe vera': 'Aloe Vera (অ্যালোভেরা)',
+  'anthurium': 'Anthurium (অ্যান্থুরিয়াম)',
+  'bunny ears cactus': 'Bunny Ears Cactus (বানি ইয়ার ক্যাকটাস)',
+  'buterfly': 'Butterfly Plant (বাটারফ্লাই প্ল্যান্ট)',
+  'calathea': 'Calathea (ক্যালাথিয়া)',
+  'coin plant': 'Coin Plant (কয়েন প্ল্যান্ট)',
+  'croton golden dust plant': 'Croton Golden Dust (ক্রোটন গোল্ডেন ডাস্ট)',
+  'coleus': 'Coleus (কলিয়াস)',
+  "devil's backbone": "Devil's Backbone (ডেভিলস ব্যাকবোন)",
+  'dumb cane': 'Dumb Cane (ডাম্ব ক্যান)',
+  'e6b100c7ae1b52080379a42bcf3cbfe': 'Variegated Ficus (ভ্যারিয়েগেটেড ফাইকাস)',
+  'jade plant': 'Jade Plant (জেড প্ল্যান্ট)',
+  'lucky bamboo': 'Lucky Bamboo (লাকি ব্যাম্বু)',
+  'money plant': 'Money Plant (মানিপ্ল্যান্ট)',
+  'monstera': 'Monstera Deliciosa (মনস্টেরা)',
+  'peace lily': 'Peace Lily (পিস লিলি)',
+  'pencil cactus plant': 'Pencil Cactus (পেন্সিল ক্যাকটাস)',
+  'philodendron': 'Philodendron (ফিলোডেনড্রন)',
+  'purple heart': 'Purple Heart (পার্পল হার্ট)',
+  'reo plant': 'Reo Plant (রিও প্ল্যান্ট)',
+  'rubber plannt': 'Rubber Plant (রাবার প্ল্যান্ট)',
+  'syngonium': 'Syngonium (সিঙ্গোনিয়াম)',
+  'snake plant': 'Snake Plant (স্নেক প্ল্যান্ট)',
+  'succulent plant': 'Succulent (সাকুলেন্ট প্ল্যান্ট)',
+  'u': 'Haworthia Succulent (হাওরথিয়া সাকুলেন্ট)',
+  'zebrina': 'Zebrina Wandering Jew (জেব্রিনা)',
+  'zz plant': 'ZZ Plant (জেডজেড প্ল্যান্ট)',
+  'caladium': 'Caladium (ক্যালডিয়াম)',
+
+  // Bonsai
+  'amm': 'Mango Bonsai (আম বনসাই)',
+  'b': 'Ficus Retusa Bonsai (ফাইকাস বনসাই)',
+  'bagan bilash': 'Bougainvillea Bonsai (বাগান বিলাস বনসাই)',
+  'china bot': 'China Banyan Bonsai (চীন বট বনসাই)',
+  'crishnachura': 'Krishnachura Bonsai (কৃষ্ণচূড়া বনসাই)',
+  'deshi': 'Deshi Banyan Bonsai (দেশি বট বনসাই)',
+  'ficus benjamina': 'Ficus Benjamina (বেনজামিনা বনসাই)',
+  'ficus religiosa': 'Ficus Religiosa (অশ্বত্থ বনসাই)',
+  'jade': 'Jade Bonsai (জেড বনসাই)',
+  'joba': 'Hibiscus Bonsai (জবা বনসাই)',
+  'kamranga': 'Starfruit Bonsai (কামরাঙা বনসাই)',
+  'krinasura': 'Royal Poinciana Bonsai (কৃষ্ণচূড়া বনসাই)',
+  'lojja boti': 'Mimosa Bonsai (লজ্জাবতী বনসাই)',
+  'pakur': 'Pakur Tree Bonsai (পাকুড় বনসাই)',
+  'rongon': 'Ixora Bonsai (রঙ্গন বনসাই)',
+  'tetul ta': 'Tamarind Bonsai (তেঁতুল বনসাই)',
+
+  // Flowers Plant
+  'allamanda': 'Allamanda (অ্যালমন্ডা ফুল)',
+  'beli jasmine': 'Beli (বেলি ফুল)',
+  'camelia': 'Camellia (ক্যামেলিয়া ফুল)',
+  'chameli': 'Chameli (চামেলি ফুল)',
+  'champa চাঁপা': 'Champa (চাঁপা ফুল)',
+  'champa': 'Champa (চাঁপা ফুল)',
+  'china togor': 'China Togor (চীন টগর ফুল)',
+  'chondro mollika চন্দ্রমল্লিকা': 'Chrysanthemum (চন্দ্রমল্লিকা)',
+  'daisy': 'Daisy (ডেইজি ফুল)',
+  'dahlia': 'Dahlia (ডালিয়া ফুল)',
+  'dulon chapa': 'Dolan Champa (দোলনচাঁপা)',
+  'gondhoraj': 'Gardenia (গন্ধরাজ ফুল)',
+  'hasnahena': 'Hasnahena (হাসনাহেনা)',
+  'jui (জুঁই) star jasmine': 'Star Jasmine (জুঁই ফুল)',
+  'jui': 'Star Jasmine (জুঁই ফুল)',
+  'kameni': 'Kamini (কামিনী ফুল)',
+  'kat gulap': 'Plumeria (কাঠগোলাপ)',
+  'kata mukut': 'Crown of Thorns (কাঁটামুকুট)',
+  'kochuri pana': 'Water Hyacinth (কচুরিপানা ফুল)',
+  'kodom': 'Kadamba (কদম ফুল)',
+  'kolaboti': 'Canna Lily (কলাবতী ফুল)',
+  'kolke kobori': 'Yellow Oleander (কলকে করবী)',
+  'kosmos': 'Cosmos (কসমস ফুল)',
+  'krishno chura': 'Krishnachura (কৃষ্ণচূড়া)',
+  'kunjolota': 'Cypress Vine (কুঞ্জলতা ফুল)',
+  'lanka joba': 'Chili Hibiscus (লঙ্কা জবা)',
+  'lantana camera': 'Lantana (ল্যান্টানা ফুল)',
+  'lily': 'Lily (লিলি ফুল)',
+  'lojjaboti': 'Mimosa (লজ্জাবতী ফুল)',
+  'lotus পদ্ম (podmo)': 'Lotus (পদ্ম ফুল)',
+  'lotus': 'Lotus (পদ্ম ফুল)',
+  'madhubi lota': 'Madhavi Lata (মাধবীলতা)',
+  'marigold': 'Marigold (গাঁদা ফুল)',
+  'noyon tara': 'Periwinkle (নয়নতারা ফুল)',
+  'oprajita': 'Butterfly Pea (অপরাজিতা ফুল)',
+  'palash tree': 'Palash (পলাশ ফুল)',
+  'petunia plant': 'Petunia (পেটুনিয়া ফুল)',
+  'polash': 'Palash (পলাশ ফুল)',
+  'ponika পানিকা ফুল': 'Ponika (পানিকা ফুল)',
+  'poppy': 'Poppy (পপি ফুল)',
+  'portulica': 'Portulaca (পর্তুলিকা / ঘাসফুল)',
+  'rain lily': 'Rain Lily (রেইন লিলি)',
+  'rose': 'Rose (গোলাপ ফুল)',
+  'shiuly': 'Night Flowering Jasmine (শিউলি ফুল)',
+  'shonda maloti': 'Four O Clock (সন্ধ্যামালতী)',
+  'confederate rose': 'Confederate Rose (স্থলপদ্ম)',
+  'sunflower': 'Sunflower (সূর্যমুখী ফুল)',
+  'tuberose': 'Tuberose (রজনীগন্ধা)',
+  'tulip': 'Tulip (টিউলিপ ফুল)',
+  'unknown': 'Exotic Blossom (অপরিচিত সুন্দর ফুল)',
+  'water lily': 'Water Lily (নীল শাপলা)',
+  'zinnia': 'Zinnia (জিনিয়া ফুল)',
+  'চন্দ্রপ্রভা সোনাপাতি ফুল': 'Yellow Bells (চন্দ্রপ্রভা সোনাপাতি)',
+  'চন্দ্রমল্লিকা': 'Chrysanthemum (চন্দ্রমল্লিকা)',
+  'জারবেরা (gerbera) african daisy': 'Gerbera (জারবেরা ফুল)',
+  'নীল ঘন্টা bush clock vine': 'Bush Clock Vine (নীল ঘণ্টা ফুল)',
+  'পটপটি রুয়েলিয়া ফুল': 'Ruellia (পটপটি ফুল)',
+  'বকুল ফুল bakul flower': 'Spanish Cherry (বকুল ফুল)',
+  'ভৃঙ্গরাজ singapore daisy sphagneticola calendulacea': 'Singapore Daisy (ভৃঙ্গরাজ ফুল)',
+  'মোরগঝুঁটি ফুল': 'Cockscomb (মোরগঝুঁটি ফুল)',
+  'সোনালু বাঁদর লাঠি': 'Golden Shower (সোনালু ফুল)',
+  'সোনালু বাঁদর লাঠি 1': 'Golden Shower Tree (সোনালু ফুল)',
+
+  // Guppy
+  '24k gold guppy': '24K Full Gold Guppy (২৪কে ফুল গোল্ড গাপ্পি)',
+  'blue topaz guppy': 'Albino Blue Topaz Guppy (অ্যালবিনো ব্লু টোপাজ গাপ্পি)',
+  'albino red koi guppy': 'Albino Red Koi Guppy (অ্যালবিনো রেড কই গাপ্পি)',
+  'red moscow guppy': 'Red Moscow Guppy (রেড মস্কো গাপ্পি)',
+  'albino snakeskin guppy': 'Albino Snakeskin Guppy (অ্যালবিনো স্নেকস্কিন গাপ্পি)',
+  'albino blue ribbon fin female guppy': 'Albino Blue Ribbon Guppy (অ্যালবিনো ব্লু রিবন গাপ্পি)',
+  'black metal lace guppy': 'Black Metal Lace Guppy (ব্ল্যাক মেটাল লেইস গাপ্পি)',
+  'black metalguppy': 'Black Metal Guppy (ব্ল্যাক মেটাল গাপ্পি)',
+  'black moscow guppy': 'Black Moscow Guppy (ব্ল্যাক মস্কো গাপ্পি)',
+  'blue dragon ribbon': 'Blue Dragon Ribbon Guppy (ব্লু ড্রাগন রিবন গাপ্পি)',
+  'blue grass guppy': 'Blue Grass Guppy (ব্লু গ্রাস গাপ্পি)',
+  'blue head samurai guppy': 'Blue Head Samurai Guppy (ব্লু হেড সামুরাই গাপ্পি)',
+  'blue moscow guppy': 'Blue Moscow Guppy (ব্লু মস্কো গাপ্পি)',
+  'dumbo musaic': 'Dumbo Mosaic Guppy (ডাম্বো মোজাইক গাপ্পি)',
+  'gold dust moly': 'Gold Dust Molly (গোল্ড ডাস্ট মলি)',
+  'gold lace snakeskin': 'Gold Lace Snakeskin Guppy (গোল্ড লেইস স্নেকস্কিন গাপ্পি)',
+  'green dragon': 'Green Dragon Guppy (গ্রিন ড্রাগন গাপ্পি)',
+  'green moscow guppy': 'Green Moscow Guppy (গ্রিন মস্কো গাপ্পি)',
+  'hb red rose': 'HB Red Rose Guppy (এইচবি রেড রোজ গাপ্পি)',
+  'koi txido guppy': 'Koi Tuxedo Guppy (কই টাক্সিডো গাপ্পি)',
+  'purple mosaic guppy': 'Purple Mosaic Guppy (পার্পল মোজাইক গাপ্পি)',
+  'red dragon': 'Red Dragon Guppy (রেড ড্রাগন গাপ্পি)',
+  'red gragon': 'Red Dragon Dragon-Eye Guppy (রেড ড্রাগন গাপ্পি)',
+  'red tail platinum dumbo ear': 'Red Tail Platinum Dumbo Ear (রেড টেইল ডাম্বো ইয়ার)',
+  'ribbon guppy': 'Longfin Ribbon Guppy (লংফিন রিবন গাপ্পি)',
+  'rtp dumbo ear': 'RTP Dumbo Ear Guppy (আরটিপি ডাম্বো ইয়ার গাপ্পি)',
+  'santa claus guppy': 'Santa Claus Guppy (সান্তা ক্লজ গাপ্পি)',
+  'shanta cluse guppy': 'Santa Claus Strain Guppy (সান্তা ক্লজ গাপ্পি)',
+  'snow white gyuppy': 'Snow White Guppy (স্নো হোয়াইট গাপ্পি)',
+  'tuxedo koi guppies': 'Tuxedo Koi Guppies (টাক্সিডো কই গাপ্পি)',
+  'un': 'Platinum Cross Guppy (প্ল্যাটিনাম ক্রস গাপ্পি)',
+  'white toxido': 'White Tuxedo Guppy (হোয়াইট টাক্সিডো গাপ্পি)',
+
+  // Fighter / Betta
+  'alien betta fish': 'Alien Betta Fish (এলিয়েন ফাইটার ফিশ)',
+  'betta dumbo lavender': 'Dumbo Lavender Betta (ডাম্বো ল্যাভেন্ডার বেটা ফিশ)',
+  'betta red dragon': 'Red Dragon Betta (রেড ড্রাগন ফাইটার ফিশ)',
+  'betta red snow dragon': 'Red Snow Dragon Betta (রেড স্নো ড্রাগন বেটা ফিশ)',
+  'blue rim betta fish': 'Blue Rim Betta (ব্লু রিম ফাইটার ফিশ)',
+  'candy betta fish': 'Candy Koi Betta (ক্যান্ডি কই বেটা ফিশ)',
+  'half moon betta fish': 'Halfmoon Betta (হাফমুন ফাইটার ফিশ)',
+  'koi betta fish': 'Marble Koi Betta (মার্বেল কই ফাইটার ফিশ)',
+  'red koi galaxy) betta': 'Red Koi Galaxy Betta (রেড কই গ্যালাক্সি বেটা ফিশ)',
+  'rose tail': 'Rosetail Betta (রোজটেইল ফাইটার ফিশ)',
+
+  // Marine / SeaWater Fish
+  'nemo clownfish': 'Nemo Ocellaris Clownfish (নিমো ক্লাউনফিশ)',
+  'blue tang': 'Pacific Blue Tang (প্যাসিফিক ব্লু ট্যাং)',
+  'yellow tang': 'Yellow Tang Surgeonfish (ইয়েলো ট্যাং)',
+};
+
 function formatTitle(key, sampleFile) {
-  // Common clean mappings
-  const map = {
-    'aglaonema': 'Aglaonema (Chinese Evergreen)',
-    'money plant': 'Money Plant (Golden Pothos)',
-    'coin plant': 'Coin Plant (Pilea Peperomioides)',
-    'lucky bamboo': 'Lucky Bamboo (Dracaena Sanderiana)',
-    'snake plant': 'Snake Plant (Sansevieria)',
-    'syngonium': 'Syngonium (Arrowhead Plant)',
-    'zz plant': 'ZZ Plant (Zamioculcas Zamiifolia)',
-    'calathea': 'Calathea (Peacock Plant)',
-    'coleus': 'Coleus (Painted Nettle)',
-    'dumb cane dieffenbachia': 'Dumb Cane (Dieffenbachia)',
-    "devil's backbone": "Devil's Backbone (Euphorbia)",
-    'nemo clownfish': 'Nemo Ocellaris Clownfish',
-    'blue tang': 'Pacific Blue Tang (Regal Tang)',
-    'yellow tang': 'Yellow Tang (Hawaiian Surgeonfish)',
-    'ficus benjamina': 'Ficus Benjamina Bonsai',
-    'ficus religiosa peepal': 'Ficus Religiosa (Peepal) Bonsai',
-    'water lily': 'Exotic Water Lily (Shapla)',
-    'allamanda': 'Allamanda (Golden Trumpet)',
-    'beli arabian jasmine': 'Beli (Arabian Jasmine)',
-    'dahlia': 'Dahlia Flower',
-    'marigold': 'Marigold (Genda Flower)',
-    'tuberose rajnigandha': 'Tuberose (Rajnigandha)',
-    'confederate rose stol poddo': 'Confederate Rose (Sthol Poddo)',
-    'red moscow guppy': 'Red Moscow Pureline Guppy',
-    'black moscow guppy': 'Black Moscow Pureline Guppy',
-    'albino blue topaz guppy': 'Albino Blue Topaz Guppy',
-    '24k full gold guppy': '24K Full Gold Pureline Guppy',
-  };
+  if (titleDictionary[key]) return titleDictionary[key];
 
-  if (map[key]) return map[key];
-
-  // Capitalize words cleanly
   let cleaned = sampleFile.replace(/\.(jpg|jpeg|png|webp)(\.(jpg|png))?$/i, '');
   cleaned = cleaned.replace(/[-_ ]*(\(?\d+\)?)+$/g, '');
   cleaned = cleaned.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
-  return cleaned
+  const eng = cleaned
     .split(' ')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+  return `${eng} (${eng})`;
 }
 
 function getItemSpecs(catId, title, key) {
@@ -274,7 +410,7 @@ function getItemSpecs(catId, title, key) {
     ];
     let tags = ["Floral", "Flowering", "Outdoor & Balcony"];
 
-    if (t.includes('water lily') || t.includes('lotus') || t.includes('poddo')) {
+    if (t.includes('water lily') || t.includes('lotus') || t.includes('poddo') || t.includes('শাপলা')) {
       light = "Direct Sunlight (6+ hours for prolific blooming)";
       water = "Submerged aquatic setting; water depth 25cm - 50cm above crown";
       soil = "Heavy clay aquatic planting soil capped with sand or gravel";
@@ -284,9 +420,9 @@ function getItemSpecs(catId, title, key) {
         "Remove decaying underwater leaves regularly to keep water clear."
       ];
       tags.push("Aquatic", "Water Lily", "Pond Flora");
-    } else if (t.includes('rose') || t.includes('gulap')) {
+    } else if (t.includes('rose') || t.includes('gulap') || t.includes('গোলাপ')) {
       tags.push("Fragrant", "Rose");
-    } else if (t.includes('jasmine') || t.includes('bely') || t.includes('jui') || t.includes('kameni')) {
+    } else if (t.includes('jasmine') || t.includes('bely') || t.includes('jui') || t.includes('kameni') || t.includes('বেলি')) {
       tags.push("Intense Fragrance", "Night Blooming");
     }
 
@@ -449,7 +585,7 @@ categoriesMeta.forEach(cat => {
     allItems.push({
       id,
       name: title,
-      scientificName: `${title} Specimen`,
+      scientificName: `${title.split(' (')[0]} Specimen`,
       bengaliName: `${cat.bengaliName} • ${title}`,
       categoryId: cat.id,
       categoryName: cat.name,

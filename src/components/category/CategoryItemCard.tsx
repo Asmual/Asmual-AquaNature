@@ -174,7 +174,7 @@ export default function CategoryItemCard({ item, onSelect }: CategoryItemCardPro
             </span>
           </div>
 
-          <h3 className="font-heading font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+          <h3 className="font-heading font-bold text-xs sm:text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug min-h-[2.25rem]">
             {item.name}
           </h3>
 
