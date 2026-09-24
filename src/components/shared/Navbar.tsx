@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Layers,
   BookOpen,
+  ChevronDown,
 } from "lucide-react";
 import Logo from "./Logo";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -385,7 +386,7 @@ export const Navbar = () => {
                 </Link>
               </li>
 
-              {/* Fishes Dropdown - Clean Titles Only, NO Arrows */}
+              {/* Fishes Dropdown - with ChevronDown indicator */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("fish")}
@@ -394,6 +395,11 @@ export const Navbar = () => {
                 <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer">
                   <Fish className="w-4 h-4 text-primary" />
                   <span>Fishes</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
+                      activeDropdown === "fish" ? "rotate-180 text-primary" : ""
+                    }`}
+                  />
                 </button>
 
                 {activeDropdown === "fish" && (
@@ -413,7 +419,7 @@ export const Navbar = () => {
                 )}
               </li>
 
-              {/* Plants Dropdown - Clean Titles Only, NO Arrows */}
+              {/* Plants Dropdown - with ChevronDown indicator */}
               <li
                 className="relative"
                 onMouseEnter={() => setActiveDropdown("plants")}
@@ -422,6 +428,11 @@ export const Navbar = () => {
                 <button className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer">
                   <Leaf className="w-4 h-4 text-accent" />
                   <span>Plants</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
+                      activeDropdown === "plants" ? "rotate-180 text-accent" : ""
+                    }`}
+                  />
                 </button>
 
                 {activeDropdown === "plants" && (
@@ -508,17 +519,200 @@ export const Navbar = () => {
         </div>
 
         {/* Scrollable Drawer Content */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-          {/* Quick Search */}
-          <div className="relative">
-            <div className="w-full flex items-center bg-surface border border-border rounded-xl px-3 py-2.5 focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all">
-              <Search className="w-4 h-4 text-muted-foreground mr-2 shrink-0" />
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          {/* 1. Single-Line User State (Compact, No Large Section) */}
+          {session?.user ? (
+            <div className="space-y-2 pb-2.5 border-b border-border/70">
+              {/* Single Line User Info */}
+              <Link
+                href="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between gap-2.5 px-3 py-2 bg-surface hover:bg-surface-hover rounded-xl border border-border/70 transition-colors group"
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="relative w-7 h-7 rounded-full overflow-hidden border border-accent shrink-0 bg-primary-dark">
+                    <Image
+                      src={userAvatar}
+                      alt={userName}
+                      fill
+                      sizes="28px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                    {userName}
+                  </p>
+                </div>
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-accent-soft text-primary font-bold uppercase tracking-wider shrink-0">
+                  {userRole}
+                </span>
+              </Link>
+
+              {/* Logout Button directly below User Name */}
+              <button
+                type="button"
+                onClick={handleSignOut}
+                disabled={isLoggingOut}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-red-50 hover:bg-red-100 text-danger border border-red-200/80 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {isLoggingOut ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-danger" />
+                ) : (
+                  <LogOut className="w-3.5 h-3.5" />
+                )}
+                <span>{isLoggingOut ? "Signing out..." : "Sign Out"}</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-2 px-3 py-2 bg-surface rounded-xl border border-border/70">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-full bg-accent-soft flex items-center justify-center text-primary shrink-0">
+                  <User className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <span className="text-xs font-semibold text-foreground truncate">
+                  Guest
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-white text-foreground text-xs font-semibold transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* 2. NAVIGATION LINKS LIST (Directly below user state) */}
+          <div className="space-y-1.5 pt-1">
+            {/* 1. Home Link (NO arrow) */}
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-primary bg-accent-soft/60 hover:bg-accent-soft transition-colors"
+            >
+              <Home className="w-4 h-4 text-primary" />
+              <span>Home</span>
+            </Link>
+
+            {/* 2. Fishes Accordion - with ChevronDown arrow indicator */}
+            <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
+              <button
+                type="button"
+                onClick={() => setMobileFishOpen(!mobileFishOpen)}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Fish className="w-4 h-4 text-primary" />
+                  <span>Fishes</span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                    mobileFishOpen ? "rotate-180 text-primary" : ""
+                  }`}
+                />
+              </button>
+
+              {mobileFishOpen && (
+                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
+                  {fishCategories.map((item, idx) => (
+                    <Link
+                      key={idx}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 3. Plants Accordion - with ChevronDown arrow indicator */}
+            <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
+              <button
+                type="button"
+                onClick={() => setMobilePlantsOpen(!mobilePlantsOpen)}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Leaf className="w-4 h-4 text-accent" />
+                  <span>Plants</span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                    mobilePlantsOpen ? "rotate-180 text-accent" : ""
+                  }`}
+                />
+              </button>
+
+              {mobilePlantsOpen && (
+                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
+                  {plantCategories.map((item, idx) => (
+                    <Link
+                      key={idx}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 4. All Categories (NO arrow) */}
+            <Link
+              href="/#categories"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
+            >
+              <Layers className="w-4 h-4 text-muted-foreground" />
+              <span>Categories</span>
+            </Link>
+
+            {/* 5. About Us (NO arrow) */}
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
+            >
+              <Info className="w-4 h-4 text-muted-foreground" />
+              <span>About Us</span>
+            </Link>
+
+            {/* 6. Contact (NO arrow) */}
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
+            >
+              <PhoneCall className="w-4 h-4 text-muted-foreground" />
+              <span>Contact</span>
+            </Link>
+          </div>
+
+          {/* 3. Quick Search */}
+          <div className="pt-2 border-t border-border/60 relative">
+            <div className="w-full flex items-center bg-surface border border-border rounded-xl px-3 py-2 focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all">
+              <Search className="w-3.5 h-3.5 text-muted-foreground mr-2 shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search species..."
-                className="w-full bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                className="w-full bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
               {searchQuery && (
                 <button
@@ -536,7 +730,7 @@ export const Navbar = () => {
               <div className="mt-2 bg-white rounded-xl border border-border shadow-lg p-2 space-y-1">
                 <div className="px-2 py-1 text-[10px] font-bold text-muted-foreground uppercase flex items-center justify-between">
                   <span>Results ({liveSearchResults.length})</span>
-                  <span className="text-accent">Click to open</span>
+                  <span className="text-accent font-semibold">Open</span>
                 </div>
                 {liveSearchResults.length > 0 ? (
                   liveSearchResults.map((item) => {
@@ -577,182 +771,6 @@ export const Navbar = () => {
                 )}
               </div>
             )}
-          </div>
-
-          {/* User Account State Card */}
-          {session?.user ? (
-            <div className="bg-gradient-to-br from-primary to-primary-dark text-white rounded-2xl p-3.5 shadow-sm space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-accent shrink-0 bg-primary-dark shadow-sm">
-                  <Image
-                    src={userAvatar}
-                    alt={userName}
-                    fill
-                    sizes="48px"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-bold text-white truncate">{userName}</p>
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-accent text-primary shrink-0">
-                      {userRole}
-                    </span>
-                  </div>
-                  <p className="text-xs text-white/70 truncate mt-0.5">{userEmail}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/15">
-                <Link
-                  href="/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm transition-colors text-center"
-                >
-                  <User className="w-3.5 h-3.5 text-accent" />
-                  <span>My Profile</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  disabled={isLoggingOut}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-100 hover:text-white text-xs font-semibold backdrop-blur-sm transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  {isLoggingOut ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <LogOut className="w-3.5 h-3.5" />
-                  )}
-                  <span>{isLoggingOut ? "Exiting..." : "Sign Out"}</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-surface border border-border rounded-2xl p-3.5 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-accent-soft flex items-center justify-center text-primary shrink-0">
-                  <User className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-primary">Member Community</p>
-                  <p className="text-[11px] text-muted-foreground">Sign in for personalized bookmarks</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors text-center"
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>Sign In</span>
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-white border border-primary/30 hover:border-accent text-primary text-xs font-bold shadow-sm transition-colors text-center"
-                >
-                  <span>Register</span>
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* NAVIGATION LINKS LIST - NO ARROWS, NO SLASHES, ONLY 1-2 WORD TITLES */}
-          <div className="space-y-1.5 pt-1">
-            {/* 1. Home Link */}
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-primary bg-accent-soft/50 hover:bg-accent-soft transition-colors"
-            >
-              <Home className="w-4 h-4 text-primary" />
-              <span>Home</span>
-            </Link>
-
-            {/* 2. Fishes Accordion - ONLY Titles, NO Arrows */}
-            <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
-              <button
-                type="button"
-                onClick={() => setMobileFishOpen(!mobileFishOpen)}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
-              >
-                <Fish className="w-4 h-4 text-primary" />
-                <span>Fishes</span>
-              </button>
-
-              {mobileFishOpen && (
-                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
-                  {fishCategories.map((item, idx) => (
-                    <Link
-                      key={idx}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 3. Plants Accordion - ONLY Titles, NO Arrows */}
-            <div className="rounded-xl border border-border/70 overflow-hidden bg-white">
-              <button
-                type="button"
-                onClick={() => setMobilePlantsOpen(!mobilePlantsOpen)}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-bold text-foreground hover:bg-surface transition-colors cursor-pointer"
-              >
-                <Leaf className="w-4 h-4 text-accent" />
-                <span>Plants</span>
-              </button>
-
-              {mobilePlantsOpen && (
-                <div className="p-2 pt-0 space-y-1 bg-surface/30 border-t border-border/40">
-                  {plantCategories.map((item, idx) => (
-                    <Link
-                      key={idx}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2 rounded-lg bg-white border border-border/60 hover:border-accent hover:bg-accent-soft/30 transition-all text-xs font-bold text-primary"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 4. All Categories */}
-            <Link
-              href="/#categories"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
-            >
-              <Layers className="w-4 h-4 text-muted-foreground" />
-              <span>Categories</span>
-            </Link>
-
-            {/* 5. About Us */}
-            <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
-            >
-              <Info className="w-4 h-4 text-muted-foreground" />
-              <span>About Us</span>
-            </Link>
-
-            {/* 6. Contact */}
-            <Link
-              href="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
-            >
-              <PhoneCall className="w-4 h-4 text-muted-foreground" />
-              <span>Contact</span>
-            </Link>
           </div>
         </div>
 
