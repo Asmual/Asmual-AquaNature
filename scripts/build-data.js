@@ -78,22 +78,98 @@ const categoriesMeta = [
   },
 ];
 
-function cleanTitle(filename) {
-  let name = filename.replace(/\.(jpg|jpeg|png|webp)$/i, '');
-  name = name.replace(/\.(jpg|png)$/i, '');
-  // Clean common noise
-  name = name.replace(/[-_]/g, ' ');
-  name = name.replace(/\s+/g, ' ').trim();
+function normalizeKey(filename) {
+  let name = filename.replace(/\.(jpg|jpeg|png|webp)(\.(jpg|png))?$/i, '');
+  // normalize number suffixes: -1, -2, - (1), _2, (1), etc.
+  name = name.replace(/[-_ ]*(\(?\d+\)?)+$/g, '');
+  name = name.replace(/[-_ ]+$/g, '');
+  name = name.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+
+  // Special aliases to consolidate identical plants
+  if (name.includes('aglonema') || name.includes('aglaonema')) return 'aglaonema';
+  if (name.includes('money plant')) return 'money plant';
+  if (name.includes('coin plant')) return 'coin plant';
+  if (name.includes('lucky bambo')) return 'lucky bamboo';
+  if (name.includes('snak plant') || name.includes('snake plant')) return 'snake plant';
+  if (name.includes('singinium') || name.includes('singunium')) return 'syngonium';
+  if (name.includes('zz')) return 'zz plant';
+  if (name.includes('calathea')) return 'calathea';
+  if (name.includes('culius') || name.includes('coleus')) return 'coleus';
+  if (name.includes('dump cane')) return 'dumb cane dieffenbachia';
+  if (name.includes('devils backbone') || name.includes("devil's backbone")) return "devil's backbone";
+  
+  if (name.includes('nemo')) return 'nemo clownfish';
+  if (name.includes('blue tang')) return 'blue tang';
+  if (name.includes('yellow tang')) return 'yellow tang';
+
+  if (name.includes('ficus benjamina')) return 'ficus benjamina';
+  if (name.includes('ficus religiosa')) return 'ficus religiosa peepal';
+  if (name.includes('water lily')) return 'water lily';
+  if (name.includes('alamanda') || name.includes('almanda')) return 'allamanda';
+  if (name.includes('bely')) return 'beli arabian jasmine';
+  if (name.includes('dalia')) return 'dahlia';
+  if (name.includes('marigold')) return 'marigold';
+  if (name.includes('tube rose')) return 'tuberose rajnigandha';
+  if (name.includes('stol poddo')) return 'confederate rose stol poddo';
+  if (name.includes('red moscow')) return 'red moscow guppy';
+  if (name.includes('black moscow')) return 'black moscow guppy';
+  if (name.includes('blue topaz')) return 'albino blue topaz guppy';
+  if (name.includes('full gold') || name.includes('24k gold')) return '24k full gold guppy';
+
   return name;
 }
 
-function getItemSpecs(catId, title, filename) {
-  const t = title.toLowerCase();
+function formatTitle(key, sampleFile) {
+  // Common clean mappings
+  const map = {
+    'aglaonema': 'Aglaonema (Chinese Evergreen)',
+    'money plant': 'Money Plant (Golden Pothos)',
+    'coin plant': 'Coin Plant (Pilea Peperomioides)',
+    'lucky bamboo': 'Lucky Bamboo (Dracaena Sanderiana)',
+    'snake plant': 'Snake Plant (Sansevieria)',
+    'syngonium': 'Syngonium (Arrowhead Plant)',
+    'zz plant': 'ZZ Plant (Zamioculcas Zamiifolia)',
+    'calathea': 'Calathea (Peacock Plant)',
+    'coleus': 'Coleus (Painted Nettle)',
+    'dumb cane dieffenbachia': 'Dumb Cane (Dieffenbachia)',
+    "devil's backbone": "Devil's Backbone (Euphorbia)",
+    'nemo clownfish': 'Nemo Ocellaris Clownfish',
+    'blue tang': 'Pacific Blue Tang (Regal Tang)',
+    'yellow tang': 'Yellow Tang (Hawaiian Surgeonfish)',
+    'ficus benjamina': 'Ficus Benjamina Bonsai',
+    'ficus religiosa peepal': 'Ficus Religiosa (Peepal) Bonsai',
+    'water lily': 'Exotic Water Lily (Shapla)',
+    'allamanda': 'Allamanda (Golden Trumpet)',
+    'beli arabian jasmine': 'Beli (Arabian Jasmine)',
+    'dahlia': 'Dahlia Flower',
+    'marigold': 'Marigold (Genda Flower)',
+    'tuberose rajnigandha': 'Tuberose (Rajnigandha)',
+    'confederate rose stol poddo': 'Confederate Rose (Sthol Poddo)',
+    'red moscow guppy': 'Red Moscow Pureline Guppy',
+    'black moscow guppy': 'Black Moscow Pureline Guppy',
+    'albino blue topaz guppy': 'Albino Blue Topaz Guppy',
+    '24k full gold guppy': '24K Full Gold Pureline Guppy',
+  };
+
+  if (map[key]) return map[key];
+
+  // Capitalize words cleanly
+  let cleaned = sampleFile.replace(/\.(jpg|jpeg|png|webp)(\.(jpg|png))?$/i, '');
+  cleaned = cleaned.replace(/[-_ ]*(\(?\d+\)?)+$/g, '');
+  cleaned = cleaned.replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned
+    .split(' ')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function getItemSpecs(catId, title, key) {
+  const t = (title + ' ' + key).toLowerCase();
 
   if (catId === 'indoor') {
     let care = "Easy";
     let light = "Bright Indirect to Medium Light";
-    let temp = "18°C - 28°C (65°F - 82°F)";
+    let temp = "18°C - 28°C";
     let water = "Water every 5-7 days; let top 2 inches dry out";
     let soil = "Well-draining potting mix with perlite, peat moss & orchid bark";
     let feed = "Balanced houseplant liquid fertilizer (10-10-10) once a month in spring/summer";
@@ -147,7 +223,7 @@ function getItemSpecs(catId, title, filename) {
   if (catId === 'bonsai') {
     let care = "Moderate";
     let light = "Bright Morning Sun & Filtered Afternoon Light";
-    let temp = "16°C - 30°C (60°F - 86°F)";
+    let temp = "16°C - 30°C";
     let water = "Check daily; water deeply when topsoil feels slightly dry";
     let soil = "Traditional Bonsai blend (Akadama, pumice, and black lava rock)";
     let feed = "Slow-release organic bonsai fertilizer pellets every 4-6 weeks";
@@ -187,7 +263,7 @@ function getItemSpecs(catId, title, filename) {
   if (catId === 'flowers') {
     let care = "Easy";
     let light = "Full Sunlight (5-6+ hours daily)";
-    let temp = "20°C - 34°C (68°F - 93°F)";
+    let temp = "20°C - 34°C";
     let water = "Water daily during warm months; keep soil consistently hydrated";
     let soil = "Rich, loamy organic soil amended with compost and cow manure";
     let feed = "Bloom booster fertilizer (high potassium/phosphorus) every 2 weeks";
@@ -233,7 +309,7 @@ function getItemSpecs(catId, title, filename) {
   if (catId === 'guppy') {
     let care = "Easy";
     let water = "Clean Freshwater (pH 7.0 - 8.0, TDS 180 - 300, GH 8 - 14)";
-    let temp = "24°C - 28°C (75°F - 82°F)";
+    let temp = "24°C - 28°C";
     let feed = "High protein micro-pellets, spirulina flakes, live baby brine shrimp & daphnia twice daily";
     let tips = [
       "Perform a 20-25% water change weekly using dechlorinated water.",
@@ -270,7 +346,7 @@ function getItemSpecs(catId, title, filename) {
   if (catId === 'fighter') {
     let care = "Easy";
     let water = "Treated Freshwater (pH 6.5 - 7.5, Soft to Medium Hard)";
-    let temp = "25°C - 29°C (77°F - 84°F)";
+    let temp = "25°C - 29°C";
     let feed = "Premium betta micropellets, frozen bloodworms, live mosquito larvae (once or twice daily)";
     let tips = [
       "House only ONE male betta per tank; males will fight to the death.",
@@ -306,7 +382,7 @@ function getItemSpecs(catId, title, filename) {
   if (catId === 'marine') {
     let care = "Moderate";
     let water = "Marine Saltwater (Specific Gravity 1.022 - 1.026, pH 8.1 - 8.4)";
-    let temp = "24°C - 26.5°C (75°F - 80°F)";
+    let temp = "24°C - 26.5°C";
     let feed = "Enriched mysis shrimp, marine flakes, chopped seafood & dried nori seaweed daily";
     let tips = [
       "Use reverse osmosis (RO/DI) water mixed with high-grade marine reef salt.",
@@ -345,41 +421,54 @@ const allItems = [];
 categoriesMeta.forEach(cat => {
   const dirPath = path.join(base, cat.folder);
   if (!fs.existsSync(dirPath)) return;
-  const files = fs.readdirSync(dirPath);
+  const files = fs.readdirSync(dirPath).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f));
 
-  files.forEach((file, index) => {
-    // Only image extensions
-    if (!/\.(jpg|jpeg|png|webp)$/i.test(file)) return;
+  // Group files by normalized key
+  const groups = {};
+  files.forEach(file => {
+    const key = normalizeKey(file);
+    if (!groups[key]) {
+      groups[key] = {
+        key,
+        sampleFile: file,
+        files: [],
+      };
+    }
+    groups[key].files.push(file);
+  });
 
-    const title = cleanTitle(file);
-    const specs = getItemSpecs(cat.id, title, file);
-    // Relative image path encoded for web URL
-    const imagePath = `/images/${cat.folder}/${file}`;
+  const groupKeys = Object.keys(groups);
+  groupKeys.forEach((key, index) => {
+    const group = groups[key];
+    const title = formatTitle(key, group.sampleFile);
+    const specs = getItemSpecs(cat.id, title, key);
 
+    const imagePaths = group.files.map(f => `/images/${cat.folder}/${f}`);
     const id = `${cat.id}-${index + 1}`;
 
     allItems.push({
       id,
       name: title,
       scientificName: `${title} Specimen`,
-      bengaliName: `${cat.bengaliName} #${index + 1}`,
+      bengaliName: `${cat.bengaliName} • ${title}`,
       categoryId: cat.id,
       categoryName: cat.name,
-      image: imagePath,
-      description: `A prime, hand-selected specimen of ${title} representing our highest health and aesthetic standards in the ${cat.name} collection. Conditioned and nurtured in ideal environmental parameters.`,
+      image: imagePaths[0],
+      images: imagePaths,
+      description: `A prime, hand-selected specimen of ${title} with ${imagePaths.length} verified showcase photos in our ${cat.name} collection. Nurtured in ideal conditions with certified vitality.`,
       ...specs
     });
   });
 });
 
-console.log(`Generated ${allItems.length} total items across 6 categories.`);
+console.log(`Generated ${allItems.length} unique cards across 6 categories.`);
 
 // Update item count in categoriesMeta
 categoriesMeta.forEach(cat => {
   cat.itemCount = allItems.filter(item => item.categoryId === cat.id).length;
 });
 
-const fileContent = `// Auto-generated comprehensive category and species catalog
+const fileContent = `// Auto-generated comprehensive category and species catalog with multi-image support
 export interface TCategoryItem {
   id: string;
   name: string;
@@ -389,6 +478,7 @@ export interface TCategoryItem {
   categoryName: string;
   type: "plant" | "fish";
   image: string;
+  images: string[];
   description: string;
   careLevel: "Easy" | "Moderate" | "Advanced";
   lightOrWater: string;

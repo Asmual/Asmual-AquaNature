@@ -14,10 +14,12 @@ import {
   Share2,
   PhoneCall,
   MessageCircle,
-  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   CheckCheck,
-  Maximize2
+  Maximize2,
+  Layers
 } from "lucide-react";
 import { toast } from "sonner";
 import { TCategoryItem } from "@/data/categories";
@@ -28,7 +30,8 @@ interface ItemDetailModalProps {
 }
 
 export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<"specs" | "maintenance" | "tips">("maintenance");
+  const images = item.images && item.images.length > 0 ? item.images : [item.image];
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -43,6 +46,10 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
         } else {
           onClose();
         }
+      } else if (e.key === "ArrowLeft" && images.length > 1) {
+        setActiveImgIndex((prev) => (prev - 1 + images.length) % images.length);
+      } else if (e.key === "ArrowRight" && images.length > 1) {
+        setActiveImgIndex((prev) => (prev + 1) % images.length);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -50,9 +57,9 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
       document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose, isZoomed]);
+  }, [onClose, isZoomed, images.length]);
 
-  const safeImagePath = encodeURI(item.image);
+  const currentSafeImage = encodeURI(images[activeImgIndex]);
 
   const handleShare = async () => {
     if (navigator.clipboard) {
@@ -65,7 +72,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
 
   const handleWhatsApp = () => {
     const text = encodeURIComponent(
-      `Hello Asmual AquaNature! I am interested in specimen: "${item.name}" from ${item.categoryName}. Could you share availability and details?`
+      `Hello Asmual AquaNature! I am interested in specimen: "${item.name}" (${item.categoryName}). Could you share availability and details?`
     );
     window.open(`https://wa.me/8801700000000?text=${text}`, "_blank");
   };
@@ -81,7 +88,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
 
       {/* Modal Dialog Card */}
       <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-border overflow-hidden z-10 my-auto max-h-[92vh] flex flex-col md:flex-row animate-in zoom-in-95 duration-200">
-        {/* Top Control Bar for Mobile & Desktop */}
+        {/* Top Control Bar */}
         <div className="absolute top-3.5 right-3.5 z-30 flex items-center gap-2">
           <button
             type="button"
@@ -111,41 +118,97 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           </button>
         </div>
 
-        {/* Left Column: Big Image Preview with Lightbox Zoom */}
-        <div className="relative w-full md:w-1/2 h-72 sm:h-80 md:h-auto bg-surface overflow-hidden shrink-0 group">
-          <Image
-            src={safeImagePath}
-            alt={item.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className={`object-cover transition-transform duration-500 ${isZoomed ? "scale-150 cursor-zoom-out" : "group-hover:scale-105 cursor-zoom-in"}`}
-            priority
-            onClick={() => setIsZoomed(!isZoomed)}
-          />
+        {/* Left Column: Big Image Preview & Thumbnail Gallery */}
+        <div className="relative w-full md:w-1/2 flex flex-col bg-surface shrink-0 border-b md:border-b-0 md:border-r border-border">
+          {/* Main Photo Area */}
+          <div className="relative w-full h-64 sm:h-72 md:h-[400px] overflow-hidden group">
+            <Image
+              key={activeImgIndex}
+              src={currentSafeImage}
+              alt={`${item.name} image ${activeImgIndex + 1}`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className={`object-cover transition-all duration-500 ${isZoomed ? "scale-150 cursor-zoom-out" : "group-hover:scale-105 cursor-zoom-in"}`}
+              priority
+              onClick={() => setIsZoomed(!isZoomed)}
+            />
 
-          <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 pointer-events-none z-10">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/90 text-white backdrop-blur-md shadow-xs">
-              {item.categoryName}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs backdrop-blur-md ${
-              item.careLevel === "Easy"
-                ? "bg-emerald-600/90 text-white"
-                : item.careLevel === "Moderate"
-                ? "bg-amber-600/90 text-white"
-                : "bg-primary text-white"
-            }`}>
-              {item.careLevel} Care
-            </span>
+            <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 pointer-events-none z-10">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/90 text-white backdrop-blur-md shadow-xs">
+                {item.categoryName}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs backdrop-blur-md ${
+                item.careLevel === "Easy"
+                  ? "bg-emerald-600/90 text-white"
+                  : item.careLevel === "Moderate"
+                  ? "bg-amber-600/90 text-white"
+                  : "bg-primary text-white"
+              }`}>
+                {item.careLevel} Care
+              </span>
+            </div>
+
+            {/* Left & Right Arrows (If multiple images) */}
+            {images.length > 1 && (
+              <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex items-center justify-between z-20 pointer-events-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveImgIndex((prev) => (prev - 1 + images.length) % images.length)}
+                  aria-label="Previous image"
+                  className="p-2 rounded-full bg-black/60 hover:bg-black/90 text-white backdrop-blur-md shadow-md transition-all hover:scale-110 cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveImgIndex((prev) => (prev + 1) % images.length)}
+                  aria-label="Next image"
+                  className="p-2 rounded-full bg-black/60 hover:bg-black/90 text-white backdrop-blur-md shadow-md transition-all hover:scale-110 cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Zoom hint button */}
+            <button
+              onClick={() => setIsZoomed(!isZoomed)}
+              className="absolute bottom-3.5 right-3.5 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              <span className="text-[10px]">{isZoomed ? "Reset Zoom" : "Click to Zoom"}</span>
+            </button>
           </div>
 
-          {/* Zoom hint button */}
-          <button
-            onClick={() => setIsZoomed(!isZoomed)}
-            className="absolute bottom-3.5 right-3.5 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
-          >
-            <Maximize2 className="w-3.5 h-3.5" />
-            <span className="text-[10px]">{isZoomed ? "Reset Zoom" : "Click to Zoom"}</span>
-          </button>
+          {/* Thumbnail Gallery (When more than 1 image) */}
+          {images.length > 1 && (
+            <div className="p-3 bg-white/80 border-t border-border flex items-center gap-2 overflow-x-auto scrollbar-none">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase shrink-0 mr-1 flex items-center gap-1">
+                <Layers className="w-3 h-3 text-accent" />
+                <span>{images.length} Photos:</span>
+              </span>
+              {images.map((img, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImgIndex(idx)}
+                  className={`relative w-12 h-12 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                    activeImgIndex === idx
+                      ? "border-accent ring-2 ring-accent/30 scale-105"
+                      : "border-border/70 opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={encodeURI(img)}
+                    alt={`${item.name} thumbnail ${idx + 1}`}
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Column: Full Details & Maintenance */}
