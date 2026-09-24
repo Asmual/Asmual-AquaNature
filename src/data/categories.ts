@@ -4,6 +4,9 @@ export interface TCategoryItem {
   name: string;
   scientificName?: string;
   bengaliName?: string;
+  regionalName?: string; // Regional name in Bangladesh (বাংলাদেশে আঞ্চলিক নাম)
+  bloomingSeason?: string; // Blooming time or breeding season (ফুল ফোটার সময় / প্রজননকাল)
+  sunlightOrShade?: string; // Sunlight vs shade requirement (সূর্যালোক ও আবহাওয়া)
   categoryId: "indoor" | "bonsai" | "flowers" | "guppy" | "fighter" | "marine";
   categoryName: string;
   type: "plant" | "fish";
@@ -5427,3 +5430,171 @@ export function getItemsByCategory(categoryId: string): TCategoryItem[] {
 export function getItemById(id: string): TCategoryItem | undefined {
   return CATEGORY_ITEMS.find((item) => item.id === id);
 }
+
+/**
+ * Returns authentic regional / colloquial name in Bangladesh (বাংলাদেশে প্রচলিত আঞ্চলিক নাম)
+ */
+export function getSpecimenRegionalName(item: TCategoryItem): string {
+  if (item.regionalName && item.regionalName.trim()) {
+    return item.regionalName;
+  }
+
+  const nameLower = item.name.toLowerCase();
+  const descLower = item.description.toLowerCase();
+
+  // Plant regional names in BD
+  if (item.type === "plant") {
+    if (nameLower.includes("water lily") || nameLower.includes("lily") || descLower.includes("water lily")) {
+      return "শালুক / নীল পদ্ম / লাল শাপলা (জলজ ফুল)";
+    }
+    if (nameLower.includes("monstera") || descLower.includes("monstera")) {
+      return "কাটা পাতা গাছ / সুইস চিজ প্ল্যান্ট";
+    }
+    if (nameLower.includes("aglaonema") || descLower.includes("aglaonema")) {
+      return "চীনা চিরসবুজ / রঙিন পাতা বাহার";
+    }
+    if (nameLower.includes("sansevieria") || nameLower.includes("snake") || descLower.includes("snake plant")) {
+      return "সাপের ফণা গাছ / স্নেক প্ল্যান্ট (বায়ু পরিশোধক)";
+    }
+    if (nameLower.includes("money plant") || nameLower.includes("pothos") || descLower.includes("money plant")) {
+      return "মানিপ্ল্যান্ট / গোল্ডেন পোথোস লতা";
+    }
+    if (nameLower.includes("bonsai") || nameLower.includes("ficus") || descLower.includes("ficus")) {
+      return "বট / পাকুড় / ডুমুর বনসাই বৃক্ষ";
+    }
+    if (nameLower.includes("rose") || descLower.includes("rose")) {
+      return "দেশি ও বিদেশি হাইব্রিড গোলাপ";
+    }
+    if (nameLower.includes("jasmine") || nameLower.includes("beli") || descLower.includes("jasmine")) {
+      return "বেলি ফুল / সুবাসিত জুঁই";
+    }
+    if (nameLower.includes("hibiscus") || nameLower.includes("jaba") || descLower.includes("hibiscus")) {
+      return "রক্তজবা / পঞ্চমুখী ঝুমকো জবা";
+    }
+    if (nameLower.includes("bougainvillea") || descLower.includes("bougainvillea")) {
+      return "বাগানবিলাস / রঙিন কাগজ ফুল";
+    }
+    if (nameLower.includes("jade") || descLower.includes("jade")) {
+      return "লাকি জেদ ট্রি / ক্র্যাসুলা";
+    }
+    if (nameLower.includes("aloe") || descLower.includes("aloe")) {
+      return "ঘৃতকুমারী / অ্যালোভেরা ভেষজ";
+    }
+    if (nameLower.includes("palm") || descLower.includes("areca")) {
+      return "সুপারি পাম / এরিকা পাম গাছ";
+    }
+    if (nameLower.includes("fern") || descLower.includes("fern")) {
+      return "ঢেঁকিশাক জাতীয় শোভাময় ফার্ন";
+    }
+    if (item.categoryId === "bonsai") {
+      return "ক্ষুদ্রাকৃতি শিল্পিত জীবন্ত বনসাই";
+    }
+    if (item.categoryId === "flowers") {
+      return "বাংলা ও গ্রীষ্মমণ্ডলীয় শোভাময় ফুল";
+    }
+    return "ইনডোর ও বারান্দার শোভাময় পাতা বাহার";
+  }
+
+  // Fish regional / trade names in BD
+  if (item.type === "fish") {
+    if (nameLower.includes("fighter") || nameLower.includes("betta") || descLower.includes("betta")) {
+      return "সিয়ামিজ ফাইটার ফিশ / লড়াকু মাছ";
+    }
+    if (nameLower.includes("guppy") || descLower.includes("guppy")) {
+      return "রংধনু মাছ / পিওরলাইন গাপ্পি";
+    }
+    if (nameLower.includes("clownfish") || nameLower.includes("nemo") || descLower.includes("clownfish")) {
+      return "অ্যানিমোন ফিশ / ক্লাউনফিশ (নিমো মাছ)";
+    }
+    if (nameLower.includes("tang") || descLower.includes("tang")) {
+      return "সার্জন ফিশ / সামুদ্রিক ইয়েলো ট্যাং";
+    }
+    if (item.categoryId === "marine") {
+      return "সামুদ্রিক লবণাক্ত পানির প্রবাল মাছ";
+    }
+    return "অ্যাকুয়ারিয়ামের শোভাময় রঙিন মাছ";
+  }
+
+  return "বাংলাদেশে সংগৃহীত প্রাকৃতিক প্রজাতি";
+}
+
+/**
+ * Returns blooming season for plants or breeding cycle for fishes (ফুল ফোটার সময় / প্রজননকাল)
+ */
+export function getSpecimenBloomingSeason(item: TCategoryItem): string {
+  if (item.bloomingSeason && item.bloomingSeason.trim()) {
+    return item.bloomingSeason;
+  }
+
+  const nameLower = item.name.toLowerCase();
+
+  if (item.type === "plant") {
+    if (item.categoryId === "flowers") {
+      if (nameLower.includes("water lily") || nameLower.includes("lotus")) {
+        return "বর্ষা ও শরৎকাল (জুন থেকে অক্টোবর)";
+      }
+      if (nameLower.includes("rose")) {
+        return "শীত ও বসন্তকাল (নভেম্বর থেকে মার্চ)";
+      }
+      if (nameLower.includes("jasmine") || nameLower.includes("beli")) {
+        return "গ্রীষ্ম ও বর্ষাকাল (এপ্রিল থেকে আগস্ট)";
+      }
+      return "বসন্ত ও গ্রীষ্মকাল (মার্চ থেকে সেপ্টেম্বর)";
+    }
+
+    if (item.categoryId === "bonsai") {
+      return "বসন্তকালে নতুন কচি পাতা গজায় (সারা বছর চিরসবুজ রূপ)";
+    }
+
+    return "সারা বছর চিরসবুজ পত্রপল্লব (ইনডোর পাতা বাহার)";
+  }
+
+  // Fish breeding cycle
+  if (item.type === "fish") {
+    if (item.categoryId === "guppy") {
+      return "সারা বছর সক্রিয় (প্রতি ২৮-৩৫ দিনে সরাসরি পোনা প্রসব)";
+    }
+    if (item.categoryId === "fighter") {
+      return "গ্রীষ্ম ও বর্ষাকাল (পানির উপর বাবল নেস্ট বা ফেনার বাসা তৈরি করে ডিম দেয়)";
+    }
+    return "অনুকূল লবণাক্ততা ও রিফ পরিবেশে নির্দিষ্ট ঋতুতে";
+  }
+
+  return "গ্রীষ্মমণ্ডলীয় আবহাওয়া অনুযায়ী উপযুক্ত মৌসুমে";
+}
+
+/**
+ * Returns sunlight & atmosphere needs (সূর্যালোক ও আবহাওয়া)
+ */
+export function getSpecimenSunlight(item: TCategoryItem): string {
+  if (item.sunlightOrShade && item.sunlightOrShade.trim()) {
+    return item.sunlightOrShade;
+  }
+
+  if (item.type === "plant") {
+    if (item.categoryId === "flowers") {
+      return "সরাসরি তীব্র সূর্যালোক (দৈনিক ৫-৬ ঘণ্টা উজ্জ্বল রোদ)";
+    }
+    if (item.categoryId === "bonsai") {
+      return "সকালের মিষ্টি রোদ (৩-৪ ঘণ্টা) ও মুক্ত বাতাসযুক্ত স্থান";
+    }
+    if (item.categoryId === "indoor") {
+      return "উজ্জ্বল পরোক্ষ আলো বা সেমি-শেড (সরাসরি কড়া রোদ এড়িয়ে চলুন)";
+    }
+  }
+
+  if (item.type === "fish") {
+    if (item.categoryId === "fighter") {
+      return "মৃদু ছায়াযুক্ত আলো, শান্ত স্থির পানি (২৪°-২৮°C উষ্ণতা)";
+    }
+    if (item.categoryId === "guppy") {
+      return "পরিমিত অ্যাকুয়ারিয়াম ডে-লাইট (৮-১০ ঘণ্টা) ও পরিষ্কার ফিল্টারড পানি";
+    }
+    if (item.categoryId === "marine") {
+      return "হাই-স্পেকট্রাম কোরাল রিফ ব্লু-হোয়াইট LED লাইট ও লবণাক্ত পানি";
+    }
+  }
+
+  return item.lightOrWater || "পরিমিত আলো ও অনুকূল প্রাকৃতিক পরিবেশ";
+}
+

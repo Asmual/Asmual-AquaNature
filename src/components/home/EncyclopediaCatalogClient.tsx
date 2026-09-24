@@ -1,0 +1,342 @@
+"use client";
+
+import React, { useState, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { 
+  Search, 
+  X, 
+  Layers, 
+  Leaf, 
+  Fish, 
+  Sparkles, 
+  SlidersHorizontal,
+  Compass,
+  BookOpen,
+  CheckCircle2,
+  TreePine,
+  Flower2
+} from "lucide-react";
+import { 
+  TCategoryItem, 
+  TCategoryMeta, 
+  CATEGORY_ITEMS, 
+  CATEGORIES_META 
+} from "@/data/categories";
+import CategoryItemCard from "@/components/category/CategoryItemCard";
+import ItemDetailModal from "@/components/category/ItemDetailModal";
+
+export default function EncyclopediaCatalogClient() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCare, setSelectedCare] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [activeItem, setActiveItem] = useState<TCategoryItem | null>(null);
+
+  // Filter items based on active category, search query, care level, and type
+  const filteredItems = useMemo(() => {
+    return CATEGORY_ITEMS.filter((item) => {
+      // Category filter
+      if (selectedCategory !== "all" && item.categoryId !== selectedCategory) {
+        return false;
+      }
+
+      // Type filter (plant or fish)
+      if (selectedType !== "all" && item.type !== selectedType) {
+        return false;
+      }
+
+      // Care level filter
+      if (selectedCare !== "all" && item.careLevel !== selectedCare) {
+        return false;
+      }
+
+      // Search query across name, bengaliName, scientificName, regionalName, tags, and description
+      if (searchQuery.trim() !== "") {
+        const q = searchQuery.toLowerCase().trim();
+        const matchesName = item.name.toLowerCase().includes(q);
+        const matchesBengali = item.bengaliName?.toLowerCase().includes(q) || false;
+        const matchesScientific = item.scientificName?.toLowerCase().includes(q) || false;
+        const matchesTags = item.tags.some((t) => t.toLowerCase().includes(q));
+        const matchesDesc = item.description.toLowerCase().includes(q);
+        const matchesCategory = item.categoryName.toLowerCase().includes(q);
+
+        if (!matchesName && !matchesBengali && !matchesScientific && !matchesTags && !matchesDesc && !matchesCategory) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [selectedCategory, selectedType, selectedCare, searchQuery]);
+
+  return (
+    <div className="w-full">
+      {/* 1. COMPACT ENCYCLOPEDIA HEADER BANNER */}
+      <section className="bg-gradient-to-b from-primary/10 via-surface to-background border-b border-border py-8 sm:py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-primary text-xs font-extrabold uppercase tracking-wider border border-accent/20">
+              <BookOpen className="w-3.5 h-3.5 text-accent" />
+              <span>উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত বিশ্বকোষ</span>
+            </div>
+
+            <h1 className="font-heading font-extrabold text-2xl sm:text-4xl lg:text-5xl text-primary tracking-tight leading-tight">
+              প্রকৃতির প্রামাণ্য তথ্যভাণ্ডার ও পরিচর্যা নির্দেশিকা
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
+              ইনডোর প্ল্যান্টস, জীবন্ত বনসাই, জলজ পদ্ম-শাপলা এবং বিরল প্রজাতির ফাইটার ও গাপ্পি মাছের বৈজ্ঞানিক নাম, সূর্যালোক, আবহাওয়া ও পরিচর্যা সম্পর্কে বিস্তারিত জানুন।
+            </p>
+
+            {/* Quick Live Stats Pill */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
+                <Leaf className="w-3.5 h-3.5 text-accent" />
+                <span>১০৮+ উদ্ভিদ প্রজাতি</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-primary">
+                <Fish className="w-3.5 h-3.5 text-primary" />
+                <span>৪৬+ জলজ প্রজাতি</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border shadow-2xs font-semibold text-emerald-700">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>সম্পূর্ণ উন্মুক্ত ও অবাণিজ্যিক</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. FILTER & SEARCH CONTROL BAR */}
+      <section className="sticky top-[69px] z-30 bg-white/95 backdrop-blur-md border-b border-border shadow-2xs py-3.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+          {/* Search Input and Type Toggles */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+            {/* Live Search Bar */}
+            <div className="relative flex-1 max-w-xl">
+              <Search className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="বাংলা, ইংরেজি বা বৈজ্ঞানিক নাম দিয়ে খুঁজুন (যেমন: শাপলা, Betta, Monstera, Ficus)..."
+                className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm bg-surface border border-border rounded-xl focus:outline-none focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20 transition-all text-foreground"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 text-xs"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Kingdom Filter (All / Plants / Aquatic Fishes) */}
+            <div className="flex items-center gap-1.5 self-center md:self-auto overflow-x-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedType("all");
+                  setSelectedCategory("all");
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedType === "all"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-surface text-foreground hover:bg-white border border-border"
+                }`}
+              >
+                সকল জীববৈচিত্র্য
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedType("plant");
+                  if (selectedCategory !== "indoor" && selectedCategory !== "bonsai" && selectedCategory !== "flowers") {
+                    setSelectedCategory("all");
+                  }
+                }}
+                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedType === "plant"
+                    ? "bg-accent text-primary shadow-xs"
+                    : "bg-surface text-foreground hover:bg-white border border-border"
+                }`}
+              >
+                <Leaf className="w-3.5 h-3.5 text-accent" />
+                <span>উদ্ভিদ জগত</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedType("fish");
+                  if (selectedCategory !== "fighter" && selectedCategory !== "guppy" && selectedCategory !== "marine") {
+                    setSelectedCategory("all");
+                  }
+                }}
+                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedType === "fish"
+                    ? "bg-primary text-white shadow-xs"
+                    : "bg-surface text-foreground hover:bg-white border border-border"
+                }`}
+              >
+                <Fish className="w-3.5 h-3.5 text-primary" />
+                <span>জলজ প্রাণী</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 6 Major Category Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
+                selectedCategory === "all"
+                  ? "bg-primary text-white border-primary shadow-2xs"
+                  : "bg-surface text-foreground hover:bg-white border-border"
+              }`}
+            >
+              <span>সকল ক্যাটাগরি</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                selectedCategory === "all" ? "bg-accent text-primary" : "bg-white text-muted-foreground"
+              }`}>
+                {CATEGORY_ITEMS.length}
+              </span>
+            </button>
+
+            {CATEGORIES_META.map((cat) => {
+              const isSelected = selectedCategory === cat.id;
+              // Dim if category doesn't match selected type
+              if (selectedType !== "all" && cat.type !== selectedType) return null;
+
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer border ${
+                    isSelected
+                      ? "bg-primary text-white border-primary shadow-2xs"
+                      : "bg-white text-foreground hover:border-accent hover:text-primary border-border"
+                  }`}
+                >
+                  {cat.type === "plant" ? (
+                    <Leaf className="w-3 h-3 text-accent" />
+                  ) : (
+                    <Fish className="w-3 h-3 text-accent" />
+                  )}
+                  <span>{cat.bengaliName}</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    isSelected ? "bg-accent text-primary" : "bg-surface text-muted-foreground"
+                  }`}>
+                    {cat.itemCount}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Result Count and Quick Care Filter */}
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border/60">
+            <div className="flex items-center gap-1.5 font-medium">
+              <Layers className="w-3.5 h-3.5 text-accent" />
+              <span>
+                প্রদর্শিত হচ্ছে <strong className="text-primary font-bold">{filteredItems.length}</strong> টি প্রামাণ্য প্রজাতি
+              </span>
+            </div>
+
+            {/* Care level filter buttons */}
+            <div className="flex items-center gap-1.5">
+              <span className="hidden sm:inline font-semibold text-[11px]">যত্নের মাত্রা:</span>
+              {[
+                { label: "সকল", value: "all" },
+                { label: "সহজ", value: "Easy" },
+                { label: "মাঝারি", value: "Moderate" },
+                { label: "অভিজ্ঞ", value: "Advanced" },
+              ].map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  onClick={() => setSelectedCare(c.value)}
+                  className={`px-2 py-0.5 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
+                    selectedCare === c.value
+                      ? "bg-accent-soft text-primary font-bold border border-accent/40"
+                      : "hover:text-primary text-muted-foreground"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+
+              {(searchQuery || selectedCategory !== "all" || selectedCare !== "all" || selectedType !== "all") && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategory("all");
+                    setSelectedCare("all");
+                    setSelectedType("all");
+                  }}
+                  className="ml-2 text-primary font-bold hover:underline cursor-pointer text-[11px]"
+                >
+                  রিসেট
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. DIRECT 4-COLUMN COMPACT ENCYCLOPEDIA GRID */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        {filteredItems.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            {filteredItems.map((item) => (
+              <CategoryItemCard
+                key={item.id}
+                item={item}
+                onSelect={(selected) => setActiveItem(selected)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl border border-border p-12 text-center space-y-4 max-w-md mx-auto my-12 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-accent-soft text-primary mx-auto flex items-center justify-center">
+              <Search className="w-6 h-6" />
+            </div>
+            <h3 className="font-heading font-bold text-lg text-foreground">
+              কোনো তথ্য পাওয়া যায়নি
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              &quot;{searchQuery}&quot; দিয়ে কোনো প্রজাতি পাওয়া যায়নি। অনুগ্রহ করে বানান পরীক্ষা করুন অথবা ফিল্টার পরিবর্তন করুন।
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                setSelectedCategory("all");
+                setSelectedCare("all");
+                setSelectedType("all");
+              }}
+              className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors cursor-pointer"
+            >
+              সকল ফিল্টার রিসেট করুন
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* 4. COMPREHENSIVE BOTANICAL & AQUATIC DETAIL MODAL */}
+      {activeItem && (
+        <ItemDetailModal
+          item={activeItem}
+          onClose={() => setActiveItem(null)}
+        />
+      )}
+    </div>
+  );
+}

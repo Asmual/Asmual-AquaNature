@@ -7,22 +7,28 @@ import {
   Droplets, 
   Sun, 
   Thermometer, 
-  ShieldCheck, 
   Sparkles, 
   Check, 
-  Heart,
+  Bookmark,
   Share2,
-  PhoneCall,
-  MessageCircle,
   ChevronLeft,
   ChevronRight,
-  Copy,
-  CheckCheck,
   Maximize2,
-  Layers
+  Layers,
+  Calendar,
+  Compass,
+  Search,
+  CheckCheck,
+  BookOpen,
+  Info
 } from "lucide-react";
 import { toast } from "sonner";
-import { TCategoryItem } from "@/data/categories";
+import { 
+  TCategoryItem, 
+  getSpecimenRegionalName, 
+  getSpecimenBloomingSeason, 
+  getSpecimenSunlight 
+} from "@/data/categories";
 
 interface ItemDetailModalProps {
   item: TCategoryItem;
@@ -33,7 +39,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
   const images = item.images && item.images.length > 0 ? item.images : [item.image];
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [copied, setCopied] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
 
   // Lock body scroll when modal is open
@@ -60,28 +66,45 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
   }, [onClose, isZoomed, images.length]);
 
   const currentSafeImage = encodeURI(images[activeImgIndex]);
+  const regionalName = getSpecimenRegionalName(item);
+  const bloomingSeason = getSpecimenBloomingSeason(item);
+  const sunlightCondition = getSpecimenSunlight(item);
+
+  const cleanBengaliName = item.bengaliName?.includes("•")
+    ? item.bengaliName.split("•")[1].trim()
+    : item.bengaliName || item.name;
 
   const handleShare = async () => {
-    if (navigator.clipboard) {
+    const shareData = {
+      title: `${cleanBengaliName} (${item.name}) - Asmual AquaNature Encyclopedia`,
+      text: `জানুন ${cleanBengaliName} (${item.name}) এর পরিচর্যা, আবহাওয়া ও বিজ্ঞানসম্মত তথ্য।`,
+      url: window.location.href,
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // Fallback to clipboard if user cancelled share sheet
+      }
+    } else if (navigator.clipboard) {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
-      toast.success("Page link copied to clipboard!");
+      toast.success("প্রজাতির লিংক সফলভাবে কপি করা হয়েছে!");
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  const handleWhatsApp = () => {
-    const text = encodeURIComponent(
-      `Hello Asmual AquaNature! I am interested in specimen: "${item.name}" (${item.categoryName}). Could you share availability and details?`
-    );
-    window.open(`https://wa.me/8801700000000?text=${text}`, "_blank");
+  const handleGoogleSearch = () => {
+    const query = encodeURIComponent(`${item.name} ${item.scientificName || ""} care guide`);
+    window.open(`https://www.google.com/search?q=${query}`, "_blank");
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -93,19 +116,19 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           <button
             type="button"
             onClick={handleShare}
-            aria-label="Share specimen"
+            title="তথ্য শেয়ার বা লিংক কপি করুন"
             className="p-2 rounded-full bg-white/90 hover:bg-white text-foreground hover:text-primary shadow-md border border-border transition-colors cursor-pointer"
           >
-            {copied ? <CheckCheck className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            {copied ? <CheckCheck className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
           </button>
 
           <button
             type="button"
-            onClick={() => setIsLiked(!isLiked)}
-            aria-label="Add to wishlist"
-            className="p-2 rounded-full bg-white/90 hover:bg-white text-muted-foreground hover:text-danger shadow-md border border-border transition-colors cursor-pointer"
+            onClick={() => setIsBookmarked(!isBookmarked)}
+            title="জ্ঞানকোষ বুকমার্কে সংরক্ষণ করুন"
+            className="p-2 rounded-full bg-white/90 hover:bg-white text-foreground hover:text-accent shadow-md border border-border transition-colors cursor-pointer"
           >
-            <Heart className={`w-4 h-4 ${isLiked ? "fill-danger text-danger" : ""}`} />
+            <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-accent text-accent" : ""}`} />
           </button>
 
           <button
@@ -121,7 +144,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
         {/* Left Column: Big Image Preview & Thumbnail Gallery */}
         <div className="relative w-full md:w-1/2 flex flex-col bg-surface shrink-0 border-b md:border-b-0 md:border-r border-border">
           {/* Main Photo Area */}
-          <div className="relative w-full h-64 sm:h-72 md:h-[400px] overflow-hidden group">
+          <div className="relative w-full h-64 sm:h-72 md:h-[420px] overflow-hidden group">
             <Image
               key={activeImgIndex}
               src={currentSafeImage}
@@ -144,7 +167,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
                   ? "bg-amber-600/90 text-white"
                   : "bg-primary text-white"
               }`}>
-                {item.careLevel} Care
+                {item.careLevel === "Easy" ? "সহজ যত্ন" : item.careLevel === "Moderate" ? "মাঝারি যত্ন" : "বিশেষ যত্ন"}
               </span>
             </div>
 
@@ -176,7 +199,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               className="absolute bottom-3.5 right-3.5 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md text-xs font-semibold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
             >
               <Maximize2 className="w-3.5 h-3.5" />
-              <span className="text-[10px]">{isZoomed ? "Reset Zoom" : "Click to Zoom"}</span>
+              <span className="text-[10px]">{isZoomed ? "রিসেট জুম" : "জুম করে দেখুন"}</span>
             </button>
           </div>
 
@@ -185,7 +208,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             <div className="p-3 bg-white/80 border-t border-border flex items-center gap-2 overflow-x-auto scrollbar-none">
               <span className="text-[10px] font-bold text-muted-foreground uppercase shrink-0 mr-1 flex items-center gap-1">
                 <Layers className="w-3 h-3 text-accent" />
-                <span>{images.length} Photos:</span>
+                <span>{images.length} ফটো:</span>
               </span>
               {images.map((img, idx) => (
                 <button
@@ -211,36 +234,56 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
           )}
         </div>
 
-        {/* Right Column: Full Details & Maintenance */}
-        <div className="w-full md:w-1/2 p-5 sm:p-7 overflow-y-auto space-y-5">
+        {/* Right Column: Full Encyclopedic Details & Care Guide */}
+        <div className="w-full md:w-1/2 p-5 sm:p-7 overflow-y-auto space-y-4">
           {/* Header Info */}
           <div className="space-y-1.5 border-b border-border pb-3.5 pr-20">
             <div className="flex items-center gap-1.5 text-xs font-bold text-accent">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Verified Botanical &amp; Livestock Standard</span>
+              <BookOpen className="w-4 h-4 text-accent" />
+              <span>উদ্ভিদ ও জলজ প্রাণীর উন্মুক্ত তথ্যকোষ</span>
             </div>
-            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-foreground leading-tight">
-              {item.name}
+
+            {/* Bengali Name Prominently */}
+            <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-primary leading-tight">
+              {cleanBengaliName}
             </h2>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="font-mono text-primary font-medium">{item.scientificName}</span>
-              <span>•</span>
-              <span className="text-muted-foreground font-medium">{item.categoryName} Department</span>
+
+            {/* English & Scientific Names */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+              <span className="font-semibold text-foreground/90">{item.name}</span>
+              {item.scientificName && (
+                <>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="font-mono italic text-accent font-medium">{item.scientificName}</span>
+                </>
+              )}
+            </div>
+
+            {/* Regional Name in Bangladesh */}
+            <div className="mt-2 p-2 rounded-xl bg-accent-soft/40 border border-accent/20">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-wide block">
+                বাংলাদেশে আঞ্চলিক নাম:
+              </span>
+              <p className="text-xs font-semibold text-primary mt-0.5">
+                {regionalName}
+              </p>
             </div>
           </div>
 
-          {/* Description */}
+          {/* Botanical / Species Overview */}
           <div className="space-y-1">
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Specimen Overview
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+              <Info className="w-3.5 h-3.5 text-accent" />
+              <span>প্রজাতি পরিচিতি ও বৈশিষ্ট্য</span>
             </h3>
-            <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-foreground/85 leading-relaxed">
               {item.description}
             </p>
           </div>
 
-          {/* Quick Specifications Cards */}
+          {/* Key Facts Grid (Sunlight, Blooming/Breeding, Temp, Care) */}
           <div className="grid grid-cols-2 gap-2.5">
+            {/* Sunlight / Shade */}
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 {item.type === "plant" ? (
@@ -248,40 +291,63 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
                 ) : (
                   <Droplets className="w-3.5 h-3.5 text-cyan-500" />
                 )}
-                <span>{item.type === "plant" ? "Lighting Need" : "Water Chemistry"}</span>
+                <span>{item.type === "plant" ? "সূর্যালোক ও আবহাওয়া" : "পানির ধরন ও পরিবেশ"}</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
-                {item.lightOrWater}
+                {sunlightCondition}
               </p>
             </div>
 
+            {/* Blooming / Breeding Season */}
+            <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{item.type === "plant" ? "ফুল ফোটার সময়" : "প্রজনন মৌসুম"}</span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
+                {bloomingSeason}
+              </p>
+            </div>
+
+            {/* Temperature */}
             <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
               <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <Thermometer className="w-3.5 h-3.5 text-rose-500" />
-                <span>Optimal Temp</span>
+                <span>অনুকূল তাপমাত্রা</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug">
                 {item.temperature}
               </p>
             </div>
+
+            {/* Care Level */}
+            <div className="p-3 rounded-2xl bg-surface border border-border space-y-1">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                <Compass className="w-3.5 h-3.5 text-primary" />
+                <span>যত্নের প্রয়োজনীয়তা</span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-snug font-semibold text-primary">
+                {item.careLevel === "Easy" ? "সহজ (নতুনদের উপযোগী)" : item.careLevel === "Moderate" ? "মাঝারি যত্ন প্রয়োজন" : "অভিজ্ঞদের বিশেষ যত্ন"}
+              </p>
+            </div>
           </div>
 
-          {/* Detailed Maintenance Protocols Box */}
+          {/* Full Care & Maintenance Guide */}
           <div className="rounded-2xl bg-accent-soft/30 p-4 border border-accent/20 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
-                <span>Full Maintenance &amp; Care Guide</span>
+                <span>বিস্তারিত পরিচর্যা ও যত্ন নির্দেশিকা</span>
               </h3>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent/20 text-primary">
-                Routine Care
+                নিয়মিত পরিচর্যা
               </span>
             </div>
 
             <div className="space-y-2 text-xs text-foreground/85">
               <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                 <span className="font-bold text-primary block">
-                  {item.type === "plant" ? "Hydration & Watering Schedule:" : "Water Change & Maintenance:"}
+                  {item.type === "plant" ? "পানি দেওয়ার নিয়ম (Watering):" : "পানি পরিবর্তন ও ফিল্ট্রেশন (Water Care):"}
                 </span>
                 <p className="text-muted-foreground leading-relaxed">
                   {item.maintenance.wateringOrWaterChange}
@@ -291,7 +357,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               {item.maintenance.soilOrSubstrate && (
                 <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                   <span className="font-bold text-primary block">
-                    {item.type === "plant" ? "Soil Mix & Potting Substrate:" : "Aquarium Substrate & Sizing:"}
+                    {item.type === "plant" ? "মাটি ও টবের প্রস্তুতি (Soil & Pot):" : "সাবস্ট্রেট ও অ্যাকুয়ারিয়ামের মাপ (Tank & Substrate):"}
                   </span>
                   <p className="text-muted-foreground leading-relaxed">
                     {item.maintenance.soilOrSubstrate}
@@ -301,7 +367,7 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
 
               <div className="p-2.5 rounded-xl bg-white border border-border/70 space-y-0.5">
                 <span className="font-bold text-primary block">
-                  {item.type === "plant" ? "Fertilizer & Nutrient Regimen:" : "Nutritional Diet & Feeding:"}
+                  {item.type === "plant" ? "সার ও পুষ্টি উপাদান (Fertilizer):" : "খাদ্য ও পুষ্টি তালিকা (Diet & Nutrition):"}
                 </span>
                 <p className="text-muted-foreground leading-relaxed">
                   {item.maintenance.feedingOrFertilizer}
@@ -309,10 +375,10 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
               </div>
             </div>
 
-            {/* Expert Guidelines Bullet Points */}
+            {/* Expert Tips */}
             <div className="pt-2 border-t border-accent/20 space-y-1.5">
               <span className="text-[11px] font-bold text-primary uppercase tracking-wide block">
-                Expert Guidelines &amp; Tips:
+                বিশেষজ্ঞ টিপস ও সতর্কতা:
               </span>
               <ul className="space-y-1 text-[11px] text-muted-foreground">
                 {item.maintenance.tips.map((tip, idx) => (
@@ -325,39 +391,25 @@ export default function ItemDetailModal({ item, onClose }: ItemDetailModalProps)
             </div>
           </div>
 
-          {/* Tags */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase mr-1">
-              Tags:
-            </span>
-            {item.tags.map((tag, idx) => (
-              <span
-                key={idx}
-                className="text-[10px] px-2 py-0.5 rounded-md bg-surface border border-border text-foreground/75 font-medium"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Customer Ordering / Inquiry Actions */}
+          {/* Action Buttons: Purely Educational & Research Focused */}
           <div className="pt-2 border-t border-border flex flex-col sm:flex-row items-center gap-2">
             <button
               type="button"
-              onClick={handleWhatsApp}
-              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
+              onClick={handleGoogleSearch}
+              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface hover:bg-white text-primary border border-border hover:border-accent text-xs font-bold shadow-xs transition-colors cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp Inquiry</span>
+              <Search className="w-3.5 h-3.5 text-accent" />
+              <span>গুগলে আরও তথ্য খুঁজুন</span>
             </button>
 
-            <a
-              href="tel:+8801700000000"
-              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors"
+            <button
+              type="button"
+              onClick={handleShare}
+              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-bold shadow-sm transition-colors cursor-pointer"
             >
-              <PhoneCall className="w-4 h-4" />
-              <span>Call Hotline</span>
-            </a>
+              <Share2 className="w-3.5 h-3.5 text-accent" />
+              <span>{copied ? "লিংক কপি সম্পন্ন!" : "এই তথ্যটি শেয়ার করুন"}</span>
+            </button>
           </div>
         </div>
       </div>
