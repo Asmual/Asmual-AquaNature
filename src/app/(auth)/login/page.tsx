@@ -110,13 +110,13 @@ export default function LoginPage() {
         {/* Top Header: Logo Icon + Back to Shop */}
         <div className="relative z-10 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
+            <div className="relative w-8 h-8 shrink-0 flex items-center justify-center">
               <Image
-                src="/images/Asmual-AquaNature-logo.png"
+                src="/images/main-logo.png"
                 alt="Logo"
                 width={32}
                 height={32}
-                className="w-full h-full object-contain rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
             <span className="font-heading font-extrabold text-base text-white tracking-tight">
@@ -195,14 +195,14 @@ export default function LoginPage() {
         <div className="max-w-sm w-full space-y-3.5">
           {/* Top Logo & Title (Clean & Compact) */}
           <div className="flex flex-col items-center text-center space-y-1">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border shadow-sm p-0.5 bg-surface shrink-0">
+            <div className="relative w-12 h-12 shrink-0 flex items-center justify-center">
               <Image
-                src="/images/Asmual-AquaNature-logo.png"
+                src="/images/main-logo.png"
                 alt="Logo"
-                width={40}
-                height={40}
+                width={48}
+                height={48}
                 priority
-                className="w-full h-full object-contain rounded-full"
+                className="w-full h-full object-contain"
               />
             </div>
             <h1 className="font-heading font-extrabold text-2xl text-primary tracking-tight">

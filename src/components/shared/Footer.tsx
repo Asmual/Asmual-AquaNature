@@ -85,13 +85,13 @@ export const Footer = () => {
           {/* Brand Column (Col Span 2) */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border border-accent/40 p-0.5 bg-white shrink-0">
+              <div className="relative w-12 h-12 shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 <Image
-                  src="/images/Asmual-AquaNature-logo.png"
+                  src="/images/main-logo.png"
                   alt="Asmual AquaNature"
                   width={48}
                   height={48}
-                  className="w-full h-full object-contain rounded-full"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div className="flex flex-col">

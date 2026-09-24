@@ -15,30 +15,30 @@ export const Logo: React.FC<LogoProps> = ({
   size = "md",
 }) => {
   const sizeMap = {
-    sm: { img: 36, title: "text-lg", sub: "text-[9px]" },
-    md: { img: 44, title: "text-xl sm:text-2xl", sub: "text-[10px] sm:text-[11px]" },
-    lg: { img: 56, title: "text-2xl sm:text-3xl", sub: "text-xs" },
+    sm: { img: 38, title: "text-lg", sub: "text-[9px]" },
+    md: { img: 48, title: "text-xl sm:text-2xl", sub: "text-[10px] sm:text-[11px]" },
+    lg: { img: 58, title: "text-2xl sm:text-3xl", sub: "text-xs" },
   };
 
   const current = sizeMap[size];
 
   return (
-    <Link href="/" className={cn("flex items-center gap-3 group shrink-0", className)}>
+    <Link href="/" className={cn("flex items-center gap-2.5 sm:gap-3 group shrink-0", className)}>
       <div
         className={cn(
-          "relative rounded-full overflow-hidden border border-border group-hover:border-accent transition-all duration-300 p-0.5 bg-surface shrink-0",
+          "relative shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105",
           size === "sm" && "w-9 h-9",
           size === "md" && "w-11 h-11 sm:w-12 sm:h-12",
           size === "lg" && "w-14 h-14"
         )}
       >
         <Image
-          src="/images/Asmual-AquaNature-logo.png"
+          src="/images/main-logo.png"
           alt="Asmual AquaNature Logo"
           width={current.img}
           height={current.img}
           priority
-          className="w-full h-full object-contain rounded-full"
+          className="w-full h-full object-contain"
         />
       </div>
 
@@ -58,7 +58,7 @@ export const Logo: React.FC<LogoProps> = ({
               current.sub
             )}
           >
-            Aquatic & Nature Studio
+            Aquatic &amp; Nature Studio
           </span>
         </div>
       )}
