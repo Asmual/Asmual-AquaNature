@@ -41,12 +41,14 @@ export const Navbar = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   
-  // Instant Live Search State
+  // Dropdown & Search States
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchFocused, setSearchFocused] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchDropdownRef = useRef<HTMLDivElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const navRef = useRef<HTMLElement>(null);
 
   // Close dropdowns on outside click
@@ -55,8 +57,13 @@ export const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setProfileDropdownOpen(false);
       }
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-        setSearchFocused(false);
+      if (
+        searchDropdownRef.current &&
+        !searchDropdownRef.current.contains(event.target as Node) &&
+        searchButtonRef.current &&
+        !searchButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
       }
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
         setActiveDropdown(null);
@@ -84,7 +91,7 @@ export const Navbar = () => {
       if (e.key === "Escape") {
         setMobileMenuOpen(false);
         setProfileDropdownOpen(false);
-        setSearchFocused(false);
+        setIsSearchOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -292,11 +299,26 @@ export const Navbar = () => {
 
             {/* Action Icons & User Controls (NO CART, NO WISHLIST) */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              {/* Knowledge Hub Badge */}
-              <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-soft text-primary border border-accent/30 text-xs font-bold">
-                <BookOpen className="w-3.5 h-3.5 text-accent" />
-                <span>Encyclopedia</span>
-              </div>
+              {/* Search Icon Button */}
+              <button
+                ref={searchButtonRef}
+                type="button"
+                onClick={() => {
+                  setIsSearchOpen((prev) => {
+                    const next = !prev;
+                    if (next) setTimeout(() => searchInputRef.current?.focus(), 80);
+                    return next;
+                  });
+                }}
+                className={`p-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                  isSearchOpen
+                    ? "bg-accent-soft text-primary ring-2 ring-accent/40"
+                    : "text-foreground hover:text-primary hover:bg-surface"
+                }`}
+                aria-label={isSearchOpen ? "Close search bar" : "Open search bar"}
+              >
+                <Search className="w-5 h-5 text-primary" />
+              </button>
 
               {/* User Account / Avatar Dropdown */}
               {isPending ? (
@@ -361,7 +383,7 @@ export const Navbar = () => {
                         </Link>
 
                         <Link
-                          href="/#categories"
+                          href="/category"
                           onClick={() => setProfileDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-foreground hover:bg-surface hover:text-primary transition-colors"
                         >
@@ -413,6 +435,105 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
+
+      {/* EXPANDABLE DROP-DOWN SEARCH BAR */}
+      {isSearchOpen && (
+        <div 
+          ref={searchDropdownRef}
+          className="bg-white/95 backdrop-blur-md border-b border-border shadow-xl px-4 py-3 sm:py-4 animate-in fade-in-50 slide-in-from-top-2 duration-200"
+        >
+          <div className="max-w-3xl mx-auto relative">
+            <div className="flex items-center bg-surface border border-border rounded-2xl px-4 py-2.5 shadow-xs focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all duration-200">
+              <Search className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground mr-3 shrink-0" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search specimens by name (e.g. Monstera, Betta, Water Lily, Guppy)..."
+                className="w-full bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="text-xs text-muted-foreground hover:text-foreground font-semibold px-2 py-0.5 rounded-md hover:bg-surface transition-colors mr-1 cursor-pointer"
+                >
+                  Clear
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSearchOpen(false);
+                  setSearchQuery("");
+                }}
+                className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface cursor-pointer"
+                aria-label="Close search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Live Instant Search Results */}
+            {searchQuery.trim() && (
+              <div className="mt-2.5 bg-white rounded-2xl border border-border shadow-2xl overflow-hidden p-2">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between border-b border-border/60">
+                  <span>Matched Specimens ({liveSearchResults.length})</span>
+                  <span className="text-accent font-semibold">Click to view details</span>
+                </div>
+
+                {liveSearchResults.length > 0 ? (
+                  <div className="divide-y divide-border/40 max-h-96 overflow-y-auto">
+                    {liveSearchResults.map((item) => {
+                      const title = getSpecimenDisplayTitle(item);
+                      const sci = getSpecimenScientificName(item);
+                      return (
+                        <Link
+                          key={item.id}
+                          href={`/item/${item.id}`}
+                          onClick={() => {
+                            setIsSearchOpen(false);
+                            setSearchQuery("");
+                          }}
+                          className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface transition-colors cursor-pointer group"
+                        >
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/80 shrink-0 bg-surface">
+                            <Image
+                              src={encodeURI(item.image)}
+                              alt={item.name}
+                              fill
+                              sizes="48px"
+                              className="object-cover group-hover:scale-105 transition-transform"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <h4 className="text-xs font-bold text-foreground group-hover:text-primary truncate">
+                                {title.fullTitle}
+                              </h4>
+                              <span className="text-[9.5px] px-2 py-0.5 rounded-md bg-accent-soft text-primary font-bold shrink-0">
+                                {item.categoryName}
+                              </span>
+                            </div>
+                            <p className="text-[11px] italic font-serif text-muted-foreground truncate">
+                              {sci}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-xs text-muted-foreground">
+                    No specimens found matching &quot;{searchQuery}&quot;.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* FULLY RESPONSIVE MOBILE DRAWER: NO ARROWS, NO SLASHES */}
       <div
@@ -594,7 +715,7 @@ export const Navbar = () => {
 
             {/* 4. All Categories (NO arrow) */}
             <Link
-              href="/#categories"
+              href="/category"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-bold text-foreground hover:bg-surface transition-colors"
             >
