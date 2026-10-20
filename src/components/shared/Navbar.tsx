@@ -169,91 +169,126 @@ export const Navbar = () => {
               <Logo size="md" />
             </div>
 
-            {/* Desktop Instant Live Search Bar */}
-            <div 
-              ref={searchContainerRef}
-              className="hidden lg:flex flex-1 max-w-md xl:max-w-lg relative"
-            >
-              <div className="w-full flex items-center bg-surface border border-border rounded-xl px-3.5 py-2 focus-within:border-accent focus-within:bg-white focus-within:ring-2 focus-within:ring-accent/20 transition-all duration-200">
-                <Search className="w-4 h-4 text-muted-foreground mr-2.5 shrink-0" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setSearchFocused(true);
-                  }}
-                  onFocus={() => setSearchFocused(true)}
-                  placeholder="Search species (e.g. Monstera, Betta, Water Lily)..."
-                  className="w-full bg-transparent text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="text-muted-foreground hover:text-foreground text-xs px-1.5"
+            {/* DESKTOP SINGLE-ROW NAVIGATION */}
+            <nav ref={navRef} className="hidden lg:flex items-center">
+              <ul className="flex items-center gap-1 xl:gap-2">
+                <li>
+                  <Link
+                    href="/"
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-primary hover:bg-accent-soft transition-colors duration-200 flex items-center gap-1.5"
                   >
-                    Clear
+                    <Home className="w-4 h-4 text-primary" />
+                    <span>Home</span>
+                  </Link>
+                </li>
+
+                {/* Fishes Dropdown */}
+                <li
+                  className="relative"
+                  onMouseEnter={() => setActiveDropdown("fish")}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveDropdown((prev) => (prev === "fish" ? null : "fish"))}
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Fish className="w-4 h-4 text-primary" />
+                    <span>Fishes</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                        activeDropdown === "fish" ? "rotate-180 text-primary" : "text-muted-foreground"
+                      }`}
+                    />
                   </button>
-                )}
-              </div>
 
-              {/* Instant Floating Search Results Dropdown - Direct Navigation to /item/[id] */}
-              {searchFocused && searchQuery.trim() && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-border shadow-2xl overflow-hidden z-50 p-2 animate-in fade-in-50 slide-in-from-top-2 duration-200">
-                  <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between border-b border-border/60">
-                    <span>Search Results ({liveSearchResults.length})</span>
-                    <span className="text-accent font-semibold">Click to open profile</span>
-                  </div>
-
-                  {liveSearchResults.length > 0 ? (
-                    <div className="divide-y divide-border/40 max-h-96 overflow-y-auto">
-                      {liveSearchResults.map((item) => {
-                        const title = getSpecimenDisplayTitle(item);
-                        const sci = getSpecimenScientificName(item);
-                        return (
+                  {activeDropdown === "fish" && (
+                    <div className="absolute left-0 top-full pt-2 w-52 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
+                      <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
+                        {fishCategories.map((item, idx) => (
                           <Link
-                            key={item.id}
-                            href={`/item/${item.id}`}
-                            onClick={() => {
-                              setSearchFocused(false);
-                              setSearchQuery("");
-                            }}
-                            className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface transition-colors cursor-pointer group"
+                            key={idx}
+                            href={item.href}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
                           >
-                            <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-border/80 shrink-0 bg-surface">
-                              <Image
-                                src={encodeURI(item.image)}
-                                alt={item.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-1">
-                                <h4 className="text-xs font-bold text-foreground group-hover:text-primary truncate">
-                                  {title.fullTitle}
-                                </h4>
-                                <span className="text-[9.5px] px-1.5 py-0.2 rounded-md bg-accent-soft text-primary font-bold shrink-0">
-                                  {item.categoryName}
-                                </span>
-                              </div>
-                              <p className="text-[11px] italic font-serif text-muted-foreground truncate">
-                                {sci}
-                              </p>
-                            </div>
+                            {item.name}
                           </Link>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="p-4 text-center text-xs text-muted-foreground">
-                      No specimens found matching &quot;{searchQuery}&quot;.
+                        ))}
+                      </div>
                     </div>
                   )}
-                </div>
-              )}
-            </div>
+                </li>
+
+                {/* Plants Dropdown */}
+                <li
+                  className="relative"
+                  onMouseEnter={() => setActiveDropdown("plants")}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveDropdown((prev) => (prev === "plants" ? null : "plants"))}
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Leaf className="w-4 h-4 text-accent" />
+                    <span>Plants</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                        activeDropdown === "plants" ? "rotate-180 text-accent" : "text-muted-foreground"
+                      }`}
+                    />
+                  </button>
+
+                  {activeDropdown === "plants" && (
+                    <div className="absolute left-0 top-full pt-2 w-52 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
+                      <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
+                        {plantCategories.map((item, idx) => (
+                          <Link
+                            key={idx}
+                            href={item.href}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </li>
+
+                <li>
+                  <Link
+                    href="/category"
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
+                  >
+                    <Layers className="w-4 h-4 text-muted-foreground" />
+                    <span>Categories</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    href="/about"
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
+                  >
+                    <Info className="w-4 h-4 text-muted-foreground" />
+                    <span>About Us</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    href="/contact"
+                    className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
+                  >
+                    <PhoneCall className="w-4 h-4 text-muted-foreground" />
+                    <span>Contact</span>
+                  </Link>
+                </li>
+              </ul>
+            </nav>
 
             {/* Action Icons & User Controls (NO CART, NO WISHLIST) */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -376,131 +411,6 @@ export const Navbar = () => {
               </button>
             </div>
           </div>
-
-          {/* DESKTOP NAVIGATION LINKS: NO ARROWS, NO SLASHES, CLEAN 1-2 WORD TITLES */}
-          <nav ref={navRef} className="hidden lg:flex items-center justify-between pt-3 mt-2 border-t border-border/60">
-            <ul className="flex items-center gap-1.5 xl:gap-2">
-              <li>
-                <Link
-                  href="/"
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-primary bg-accent-soft hover:bg-accent hover:text-primary transition-colors duration-200 flex items-center gap-1.5"
-                >
-                  <Home className="w-4 h-4 text-primary" />
-                  <span>Home</span>
-                </Link>
-              </li>
-
-              {/* Fishes Dropdown - with ChevronDown indicator & Click/Hover Toggle */}
-              <li
-                className="relative"
-                onMouseEnter={() => setActiveDropdown("fish")}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <button
-                  type="button"
-                  onClick={() => setActiveDropdown((prev) => (prev === "fish" ? null : "fish"))}
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Fish className="w-4 h-4 text-primary" />
-                  <span>Fishes</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      activeDropdown === "fish" ? "rotate-180 text-primary" : "text-muted-foreground"
-                    }`}
-                  />
-                </button>
-
-                {activeDropdown === "fish" && (
-                  <div className="absolute left-0 top-full pt-2 w-52 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
-                    <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
-                      {fishCategories.map((item, idx) => (
-                        <Link
-                          key={idx}
-                          href={item.href}
-                          onClick={() => setActiveDropdown(null)}
-                          className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </li>
-
-              {/* Plants Dropdown - with ChevronDown indicator & Click/Hover Toggle */}
-              <li
-                className="relative"
-                onMouseEnter={() => setActiveDropdown("plants")}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <button
-                  type="button"
-                  onClick={() => setActiveDropdown((prev) => (prev === "plants" ? null : "plants"))}
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Leaf className="w-4 h-4 text-accent" />
-                  <span>Plants</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      activeDropdown === "plants" ? "rotate-180 text-accent" : "text-muted-foreground"
-                    }`}
-                  />
-                </button>
-
-                {activeDropdown === "plants" && (
-                  <div className="absolute left-0 top-full pt-2 w-52 z-50 animate-in fade-in-50 slide-in-from-top-1 duration-200">
-                    <div className="bg-white rounded-2xl border border-border shadow-xl p-2 space-y-1">
-                      {plantCategories.map((item, idx) => (
-                        <Link
-                          key={idx}
-                          href={item.href}
-                          onClick={() => setActiveDropdown(null)}
-                          className="block px-3.5 py-2 rounded-xl text-sm font-bold text-primary hover:bg-surface hover:text-accent transition-colors duration-200"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </li>
-
-              <li>
-                <Link
-                  href="/#categories"
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
-                >
-                  <Layers className="w-4 h-4 text-muted-foreground" />
-                  <span>Categories</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/about"
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
-                >
-                  <Info className="w-4 h-4 text-muted-foreground" />
-                  <span>About Us</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/contact"
-                  className="px-3.5 py-1.5 rounded-full text-sm font-semibold text-foreground hover:text-primary hover:bg-surface transition-colors duration-200 flex items-center gap-1.5"
-                >
-                  <PhoneCall className="w-4 h-4 text-muted-foreground" />
-                  <span>Contact</span>
-                </Link>
-              </li>
-            </ul>
-
-            <div className="hidden xl:flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="font-medium">Botanical &amp; Aquatic Encyclopedia</span>
-            </div>
-          </nav>
         </div>
       </div>
 
