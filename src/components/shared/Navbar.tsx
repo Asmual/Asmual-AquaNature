@@ -304,13 +304,14 @@ export const Navbar = () => {
                 ref={searchButtonRef}
                 type="button"
                 onClick={() => {
+                  setMobileMenuOpen(false);
                   setIsSearchOpen((prev) => {
                     const next = !prev;
                     if (next) setTimeout(() => searchInputRef.current?.focus(), 80);
                     return next;
                   });
                 }}
-                className={`p-2 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${
+                className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center ${
                   isSearchOpen
                     ? "bg-accent-soft text-primary ring-2 ring-accent/40"
                     : "text-foreground hover:text-primary hover:bg-surface"
@@ -425,7 +426,10 @@ export const Navbar = () => {
               {/* HAMBURGER MENU BUTTON FOR MOBILE & TABLET (< 1024px) */}
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen(true)}
+                onClick={() => {
+                  setMobileMenuOpen(true);
+                  setIsSearchOpen(false);
+                }}
                 aria-label="Open Navigation Menu"
                 className="lg:hidden p-2 sm:p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark active:scale-95 shadow-xs transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0"
               >
