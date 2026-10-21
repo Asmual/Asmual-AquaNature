@@ -46,3 +46,13 @@ api.js
 director.js
 .env
 .env.local
+
+
+# private notes & agent docs
+agent.md
+agent.*.md
+AGENTS.md
+cloud.md
+Cloud.md
+git.txt
+my-git.txt
