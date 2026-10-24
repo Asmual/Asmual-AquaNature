@@ -62,3 +62,9 @@ my-git.txt
 
 *.orc
 *.eot
+
+run.bat
+myGit.txt
+CLAUDE.md
+.agent*
+.cloud*
